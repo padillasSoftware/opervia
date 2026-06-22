@@ -12,9 +12,24 @@ datasource db {
 }
 
 model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String
+  id String @id @default(cuid())
+
+  email        String @unique
+  passwordHash String
+
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+
+  centerId String
+  center   Center @relation(fields: [centerId], references: [id])
+
+  roleId String
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
 }
 
 model Center {
@@ -26,6 +41,8 @@ model Center {
   address String?
 
   isActive Boolean @default(true)
+
+  users User[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -40,6 +57,8 @@ model Role {
   description String?
 
   isActive Boolean @default(true)
+
+  users User[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
