@@ -10,8 +10,6 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  console.log(session)
-
   return {
     statusCode: HttpStatus.OK,
     data: session.user,

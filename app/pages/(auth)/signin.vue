@@ -4,7 +4,7 @@ import type { FormSubmitEvent, AuthFormField } from "@nuxt/ui";
 
 definePageMeta({
   layout: "auth-layout",
-  // middleware: "not-authenticated",
+  middleware: "not-authenticated",
 });
 
 const toast = useToast();
