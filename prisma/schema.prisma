@@ -26,6 +26,8 @@ model User {
   roleId String
   role   Role   @relation(fields: [roleId], references: [id])
 
+  employee Employee?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -42,7 +44,8 @@ model Center {
 
   isActive Boolean @default(true)
 
-  users User[]
+  users     User[]
+  employees Employee[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -64,4 +67,32 @@ model Role {
   updatedAt DateTime @updatedAt
 
   @@map("roles")
+}
+
+model Employee {
+  id String @id @default(cuid())
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  centerId String
+  center   Center @relation(fields: [centerId], references: [id])
+
+  firstName String
+  lastName  String
+
+  position String
+
+  salary Decimal? @db.Decimal(10, 2)
+
+  hireDate        DateTime
+  terminationDate DateTime?
+
+  isActive Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([centerId])
+  @@map("employees")
 }
