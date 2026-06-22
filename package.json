@@ -12,6 +12,8 @@
   "dependencies": {
     "@nuxt/eslint": "^1.16.0",
     "@nuxt/ui": "^4.9.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
     "@tiptap/core": "^3.27.1",
     "@tiptap/extension-bubble-menu": "^3.27.1",
     "@tiptap/extension-code": "^3.27.1",
@@ -31,9 +33,16 @@
     "@tiptap/vue-3": "^3.27.1",
     "eslint": "^10.5.0",
     "nuxt": "^4.4.8",
+    "pg": "^8.22.0",
     "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3",
     "vue": "^3.5.35",
     "vue-router": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.20.0",
+    "dotenv": "^17.4.2",
+    "prisma": "^7.8.0",
+    "tsx": "^4.22.4"
   }
 }
