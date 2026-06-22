@@ -35,6 +35,28 @@ export const useAuthentication = () => {
     await navigateTo("/");
   };
 
+const me = async () => {
+      try {
+      const result = await $fetch<AuthResponse>("/api/auth/me", {
+        method: "GET"
+      });
+
+      await fetch();
+
+      return result;
+    } catch (error) {
+      const err = error as { data?: ApiError };
+
+      return {
+        statusCode: err.data?.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        data: err.data?.data,
+        error: getErrorMessage(
+          err.data?.data?.code as string
+        ),
+      };
+    }
+}
+
   return {
     loggedIn,
     session,
@@ -43,5 +65,6 @@ export const useAuthentication = () => {
     fetch,
     login,
     logout,
+    me
   };
 };

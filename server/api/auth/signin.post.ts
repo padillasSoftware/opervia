@@ -22,28 +22,46 @@ export default defineEventHandler(async (event) => {
     include: {
       role: true,
       employee: true,
+      center: true,
     },
   });
 
   if (!user) {
-    throw errorHandler(HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED, 'INVALID_CREDENTIALS','Unauthorized');
+    throw errorHandler(
+      HttpStatus.UNAUTHORIZED,
+      HttpStatus.UNAUTHORIZED,
+      "INVALID_CREDENTIALS",
+      "Unauthorized",
+    );
   }
 
   const isPasswordValid = bcrypt.compareSync(password, user.passwordHash);
 
   const userSession = {
-    id: user.id,
-    name: user.employee?.firstName + " " + user.employee?.lastName,
-    email: user.email,
-    roles: user.role.name,
+    user: {
+      id: user.id,
+      email: user.email,
+      role: user.role.name,
+      centerId: user.center.id,
+      centerName: user.center.name,
+      employeeId: user.employee?.id ?? null,
+    },
   };
 
   await setUserSession(event, {
     user: userSession,
   });
 
+   const session = await getUserSession(event);
+
+   console.log(session)
   if (!isPasswordValid) {
-    throw errorHandler(HttpStatus.UNAUTHORIZED, HttpStatus.UNAUTHORIZED, 'INVALID_CREDENTIALS','Unauthorized');
+    throw errorHandler(
+      HttpStatus.UNAUTHORIZED,
+      HttpStatus.UNAUTHORIZED,
+      "INVALID_CREDENTIALS",
+      "Unauthorized",
+    );
   }
 
   return {
@@ -52,5 +70,6 @@ export default defineEventHandler(async (event) => {
     data: {
       user: userSession,
     },
+    session
   };
 });
