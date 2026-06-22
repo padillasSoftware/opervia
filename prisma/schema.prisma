@@ -38,7 +38,7 @@ model Center {
   id String @id @default(cuid())
 
   name    String
-  email   String?
+  email   String? @unique
   phone   String?
   address String?
 
