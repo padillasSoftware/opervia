@@ -32,7 +32,7 @@ export const useAuthentication = () => {
 
   const logout = async () => {
     await clear();
-    await navigateTo("/");
+    await navigateTo("/signin");
   };
 
 const me = async () => {

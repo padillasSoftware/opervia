@@ -38,14 +38,13 @@ export default defineEventHandler(async (event) => {
   const isPasswordValid = bcrypt.compareSync(password, user.passwordHash);
 
   const userSession = {
-    user: {
       id: user.id,
       email: user.email,
       role: user.role.name,
       centerId: user.center.id,
       centerName: user.center.name,
-      employeeId: user.employee?.id ?? null,
-    },
+      employeeId: user.employee?.id,
+      name: `${user.employee?.firstName} ${user.employee?.lastName}`
   };
 
   await setUserSession(event, {
