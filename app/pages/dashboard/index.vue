@@ -1,11 +1,6 @@
 <script setup lang="ts">
 
-definePageMeta({
-    middleware: 'authenticated'
-})
-
-const { logout } = useAuthentication();
-
+const { user } = useUserSession();
 </script>
 
 <template>
@@ -13,10 +8,10 @@ const { logout } = useAuthentication();
     <!-- Header -->
     <div>
       <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-        Bienvenido a tu Dashboard <UButton label="Sign Out" @click="logout()" />
+        Hola {{ user?.name}}
       </h1>
       <p class="text-gray-600 dark:text-gray-400 mt-2">
-        Aquí puedes ver un resumen de tu panel administrativo
+        {{ user?.centerName }}
       </p>
     </div>
 
