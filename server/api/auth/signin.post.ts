@@ -51,9 +51,6 @@ export default defineEventHandler(async (event) => {
     user: userSession,
   });
 
-   const session = await getUserSession(event);
-
-   console.log(session)
   if (!isPasswordValid) {
     throw errorHandler(
       HttpStatus.UNAUTHORIZED,
@@ -68,7 +65,6 @@ export default defineEventHandler(async (event) => {
     statusCode: HttpStatus.OK,
     data: {
       user: userSession,
-    },
-    session
+    }
   };
 });

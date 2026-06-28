@@ -8,3 +8,8 @@
 :root {
   --ui-radius: 0.5rem;
 }
+
+
+UButton {
+  cursor: pointer;
+}

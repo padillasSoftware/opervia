@@ -3,8 +3,6 @@ import type { NavigationMenuItem } from "@nuxt/ui";
 
 const { user } = useUserSession();
 
-console.log(user.value);
-
 const items: NavigationMenuItem[][] = [
   [
     {
@@ -16,6 +14,7 @@ const items: NavigationMenuItem[][] = [
     {
       label: "Empleados",
       icon: "lucide:users",
+      to: '/dashboard/employees'
     },
     {
       label: "Pacientes",
