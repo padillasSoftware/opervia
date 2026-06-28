@@ -3,6 +3,12 @@ export default defineAppConfig({
     colors: {
       primary: 'violet',
       neutral: 'slate'
+    },
+    button: {
+      slots: {
+        base: 'cursor-pointer'
+      }
     }
+
   }
 })
