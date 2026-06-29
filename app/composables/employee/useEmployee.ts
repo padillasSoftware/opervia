@@ -10,7 +10,9 @@ export const useEmployee = async (id: string) => {
 
     try {
       if (isCreating) {
-        const { data: responseData, statusCode} = await $fetch<ApiResponse<{ id: string }>>("/api/admin/employee/", {
+        const { data: responseData, statusCode } = await $fetch<
+          ApiResponse<{ id: string }>
+        >("/api/admin/employee/", {
           method: "POST",
           body: data,
         });
@@ -49,9 +51,36 @@ export const useEmployee = async (id: string) => {
     }
   };
 
+  const deactivateEmployee = async () => {
+    try {
+      const { data: updatedId, statusCode } = await $fetch(
+        `/api/admin/employee/${id}`,
+        {
+          method: "DELETE",
+        },
+      );
+
+      return {
+        statusCode,
+        data: updatedId,
+        error: "",
+      };
+    } catch (error) {
+      const err = error as { data?: ApiError };
+      const errMessage = getErrorMessage(err.data?.data?.code as string);
+
+      return {
+        statusCode: err.data?.statusCode ?? HttpStatus.INTERNAL_SERVER_ERROR,
+        data: err.data?.data,
+        error: errMessage,
+      };
+    }
+  };
+
   return {
     data,
     createOrUpdate,
+    deactivateEmployee,
     error,
     status,
     execute,

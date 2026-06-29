@@ -60,6 +60,16 @@ export default defineEventHandler(async (event) => {
     );
   }
 
+
+ if (!user.isActive) {
+    throw errorHandler(
+      HttpStatus.UNAUTHORIZED,
+      HttpStatus.UNAUTHORIZED,
+      "USER_DISABLED",
+      "USER_DISABLED",
+    );
+  }
+
   return {
     status: HttpStatus.OK,
     statusCode: HttpStatus.OK,
