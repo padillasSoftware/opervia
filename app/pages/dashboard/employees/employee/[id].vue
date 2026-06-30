@@ -57,9 +57,6 @@ const productSchema = z.object({
   salary: z.coerce.number().min(1, "El salario no puede ser menor a 1."),
   hireDate: z.string().nonempty("La fecha de contratación es requerida."),
   email: z.email("El correo electronico es requerido."),
-  password: z
-    .string("La contraseña es requerida")
-    .min(8, "La contraseña debe de tener al menos 8 caracteres"),
 });
 
 const checkValidations = () => {
@@ -149,6 +146,33 @@ watch(newProduct, checkValidations, { deep: true });
     >
       <div v-if="newProduct" class="space-y-6">
         <form class="space-y-6" @submit.prevent="handleSubmit">
+          <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div class="space-y-4">
+              <div class="space-y-2">
+                <label
+                  class="text-sm font-medium text-gray-700 dark:text-gray-200"
+                  for="employee-salary"
+                >
+                  Correo Electronico
+                </label>
+                <input
+                  id="employee-salary"
+                  v-model="newProduct.email"
+                  type="text"
+                  :class="[
+                    'block w-full rounded-md bg-white px-3 py-2 shadow-sm focus:outline-none dark:bg-primary/10 dark:text-gray-100',
+                    fieldErrors.email
+                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
+                  ]"
+                  placeholder="ejemplo@text.com"
+                />
+                <p v-if="fieldErrors.email" class="text-sm text-red-600">
+                  {{ fieldErrors.email }}
+                </p>
+              </div>
+            </div>
+          </div>
           <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div class="space-y-2">
               <label
@@ -305,59 +329,6 @@ watch(newProduct, checkValidations, { deep: true });
                 />
                 <p v-if="fieldErrors.hireDate" class="text-sm text-red-600">
                   {{ fieldErrors.hireDate }}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div class="space-y-4">
-              <div class="space-y-2">
-                <label
-                  class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                  for="employee-salary"
-                >
-                  Correo Electronico
-                </label>
-                <input
-                  id="employee-salary"
-                  v-model="newProduct.email"
-                  type="text"
-                  :class="[
-                    'block w-full rounded-md bg-white px-3 py-2 shadow-sm focus:outline-none dark:bg-primary/10 dark:text-gray-100',
-                    fieldErrors.email
-                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
-                  ]"
-                  placeholder="ejemplo@text.com"
-                />
-                <p v-if="fieldErrors.email" class="text-sm text-red-600">
-                  {{ fieldErrors.email }}
-                </p>
-              </div>
-            </div>
-
-            <div class="space-y-4">
-              <div class="space-y-2">
-                <label
-                  class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                  for="employee-hiredDate"
-                >
-                  Contraseña
-                </label>
-                <input
-                  id="employee-hireDate"
-                  v-model="newProduct.password"
-                  type="password"
-                  :class="[
-                    'block w-full rounded-md bg-white px-3 py-2 shadow-sm focus:outline-none dark:bg-primary/10 dark:text-gray-100',
-                    fieldErrors.password
-                      ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
-                      : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
-                  ]"
-                />
-                <p v-if="fieldErrors.password" class="text-sm text-red-600">
-                  {{ fieldErrors.password }}
                 </p>
               </div>
             </div>

@@ -11,9 +11,6 @@ const employeeBodySchema = z.object({
   centerId: z.string().trim().min(1, "El centro es requerido"),
   salary: z.coerce.number().min(1, "El salario no puede ser menor a 1."),
   hireDate: z.string().nonempty("La fecha de contratación es requerida."),
-  password: z
-    .string("La contraseña es requerida")
-    .min(8, "La contraseña debe de tener al menos 8 caracteres"),
 });
 
 export default defineEventHandler(async (event) => {
@@ -39,11 +36,10 @@ export default defineEventHandler(async (event) => {
       role,
       centerId,
       salary,
-      password,
       hireDate: hireDateBody,
     } = body;
 
-    const passwordHash = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(generateSecurePassword(), 10);
     const hireDate = new Date(`${hireDateBody}T12:00:00.000Z`);
 
     const employee = await prisma.$transaction(async (tx) => {
