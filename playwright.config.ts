@@ -1,3 +1,5 @@
+/// <reference types="node" />
+
 import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
@@ -25,7 +27,7 @@ export default defineConfig({
   ],
   webServer: process.env.CI
     ? {
-        command: 'npm run build && npm run preview',
+        command: 'npx nuxt build && npx nuxt preview',
         url: 'http://localhost:3000',
         reuseExistingServer: false,
         timeout: 120_000
