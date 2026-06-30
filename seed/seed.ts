@@ -22,12 +22,12 @@ async function main() {
   if (centersCount <= 0) {
     const center = await prisma.center.upsert({
       where: {
-        email: "demo@opervia.local",
+        email: "demo@maelmar.com",
       },
       update: {},
       create: {
-        name: "Opervia Demo Center",
-        email: "demo@opervia.local",
+        name: "Maelmar Demo Center",
+        email: "demo@maelmar.com",
         phone: "6861234567",
         address: "Mexicali, Baja California",
       },
