@@ -90,7 +90,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
 
       <div class="text-center">
         <h1 class="text-3xl font-bold tracking-tight text-highlighted">
-          Opervia
+          Maelmar
         </h1>
         <p class="mt-1 text-sm text-muted">
           Gestión inteligente para negocios de servicios
@@ -126,7 +126,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
         label="¿Olvidaste tu contraseña?"
       />
 
-      <p class="text-xs text-muted">© 2026 Opervia</p>
+      <p class="text-xs text-muted">© 2026 Maelmar</p>
     </div>
   </div>
 </template>

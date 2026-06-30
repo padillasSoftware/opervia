@@ -63,7 +63,7 @@ const items: NavigationMenuItem[][] = [
   >
     <template #header="{ collapsed }">
       <UIcon name="i-lucide-orbit" class="size-8 text-primary" />
-      <label v-if="!collapsed">Opervia</label>
+      <label v-if="!collapsed">Maelmar</label>
     </template>
 
     <template #default="{ collapsed }">

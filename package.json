@@ -34,6 +34,7 @@
     "@tiptap/vue-3": "^3.27.1",
     "bcryptjs": "^3.0.3",
     "eslint": "^10.5.0",
+    "nodemailer": "^9.0.1",
     "nuxt": "^4.4.8",
     "nuxt-auth-utils": "^0.5.29",
     "pg": "^8.22.0",
@@ -45,6 +46,7 @@
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.114",
+    "@types/nodemailer": "^8.0.1",
     "@types/pg": "^8.20.0",
     "dotenv": "^17.4.2",
     "prisma": "^7.8.0",

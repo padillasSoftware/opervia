@@ -1,6 +1,7 @@
 import z from "zod";
 import bcrypt from "bcryptjs";
 import { Prisma } from "../../../../prisma/generated/client";
+import { emailService } from "../../../services/";
 
 const employeeBodySchema = z.object({
   firstName: z.string().trim().min(1, "El nombre es requerido"),
@@ -39,8 +40,10 @@ export default defineEventHandler(async (event) => {
       hireDate: hireDateBody,
     } = body;
 
-    const passwordHash = await bcrypt.hash(generateSecurePassword(), 10);
+    const temporaryPassword = generateSecurePassword();
+    const passwordHash = await bcrypt.hash(temporaryPassword, 10);
     const hireDate = new Date(`${hireDateBody}T12:00:00.000Z`);
+    const config = useRuntimeConfig();
 
     const employee = await prisma.$transaction(async (tx) => {
       const roleDB = await tx.role.findUniqueOrThrow({
@@ -71,7 +74,13 @@ export default defineEventHandler(async (event) => {
       });
     });
 
-    return responseHandler("EMPLOYEE_CREATED","EMPLOYEE_CREATED", employee.id);
+    await emailService.sendWelcomeEmail({
+      to: email,
+      name: `${firstName} ${lastName}`,
+      temporaryPassword,
+      loginUrl: `${config.appUrl}/signin`,
+    });
+    return responseHandler("EMPLOYEE_CREATED", "EMPLOYEE_CREATED", employee.id);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
       return createError({
@@ -84,17 +93,17 @@ export default defineEventHandler(async (event) => {
       });
     }
 
-    if( error instanceof Prisma.PrismaClientKnownRequestError) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
-      return createError({
-        statusCode: HttpStatus.CONFLICT,
-        statusMessage: "DUPLICATED_EMAIL",
-        data: {
-          code: "DUPLICATED_EMAIL",
-        },
-      });
+        return createError({
+          statusCode: HttpStatus.CONFLICT,
+          statusMessage: "DUPLICATED_EMAIL",
+          data: {
+            code: "DUPLICATED_EMAIL",
+          },
+        });
+      }
     }
-    }
-    
+    console.log(error)
   }
 });

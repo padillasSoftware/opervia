@@ -1,7 +1,7 @@
 export const roles = [
   {
     name: 'SUPER_ADMIN',
-    description: 'Opervia platform administrator'
+    description: 'Maelmar platform administrator'
   },
   {
     name: 'MANAGER',

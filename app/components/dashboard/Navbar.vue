@@ -109,7 +109,7 @@ function closeSearch() {
                     v-model="searchTerm"
                     autofocus
                     variant="none"
-                    placeholder="Buscar en Opervia..."
+                    placeholder="Buscar en Maelmar..."
                     class="flex-1"
                     :ui="{
                       base: 'text-2xl bg-transparent border-0 ring-0 focus:ring-0',
