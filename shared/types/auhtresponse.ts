@@ -13,3 +13,13 @@ export type ApiResponse<T> = {
   data: T;
   stack?: string;
 };
+
+type AuthUser = {
+  id: string
+  email: string
+  lastLoginAt: string | null
+}
+
+export type LoginResponse = AuthResponse<{
+  user: AuthUser
+}>

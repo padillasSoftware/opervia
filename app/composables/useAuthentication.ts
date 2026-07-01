@@ -8,13 +8,18 @@ export const useAuthentication = () => {
     password: string
   ): Promise<AuthResponse> => {
     try {
-      const result = await $fetch<AuthResponse>("/api/auth/signin", {
+      const result = await $fetch<LoginResponse>("/api/auth/signin", {
         method: "POST",
         body: { email, password },
       });
 
       await fetch();
 
+      console.log(user.value, session.value, loggedIn.value,result.data)
+     if( result.data?.user.lastLoginAt === null ) {
+        await navigateTo('/first-login', {replace: true})
+        return result;
+     }
       await navigateTo('/dashboard', {replace: true})
       return result;
     } catch (error) {
