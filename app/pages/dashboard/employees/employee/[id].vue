@@ -2,6 +2,12 @@
 import * as z from "zod";
 import type { SelectItem } from "@nuxt/ui";
 
+
+definePageMeta({
+  middleware: ["role"],
+  roles: ["SUPER_ADMIN", "MANAGER"],
+});
+
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
@@ -125,7 +131,7 @@ const handleCancel = () => {
 watch(newProduct, checkValidations, { deep: true });
 </script>
 <template>
-  <div class="mx-auto max-w-4xl space-y-2">
+  <div class="mx-auto max-w-5xl space-y-6">
     <div
       v-if="pending"
       class="rounded-lg border border-gray-200 bg-white p-6 text-gray-600 shadow-sm dark:border-gray-700 dark:bg-primary/10 dark:text-gray-300"
@@ -139,11 +145,24 @@ watch(newProduct, checkValidations, { deep: true });
     >
       No encontramos el empleado solicitado.
     </div>
-    <UPageSection
-      :title="pageTitle"
-      :description="subtitle"
-      orientation="vertical"
-    >
+    <div class="mb-8 text-center">
+  <h1 class="text-5xl font-bold">
+    {{ pageTitle }}
+  </h1>
+
+  <p class="mt-2 text-lg text-muted">
+    {{ subtitle }}
+  </p>
+</div>
+    <!-- <UPageSection
+  :title="pageTitle"
+  :description="subtitle"
+  orientation="vertical"
+  :ui="{
+    root: 'py-0',
+    container: 'py-0'
+  }"
+> -->
       <div v-if="newProduct" class="space-y-6">
         <form class="space-y-6" @submit.prevent="handleSubmit">
           <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -166,7 +185,7 @@ watch(newProduct, checkValidations, { deep: true });
                       : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
                   ]"
                   placeholder="ejemplo@text.com"
-                />
+                >
                 <p v-if="fieldErrors.email" class="text-sm text-red-600">
                   {{ fieldErrors.email }}
                 </p>
@@ -193,7 +212,7 @@ watch(newProduct, checkValidations, { deep: true });
                 ]"
                 placeholder="ejemplo-producto"
                 autocomplete="off"
-              />
+              >
               <p v-if="fieldErrors.firstName" class="text-sm text-red-600">
                 {{ fieldErrors.firstName }}
               </p>
@@ -218,7 +237,7 @@ watch(newProduct, checkValidations, { deep: true });
                 ]"
                 placeholder="Nombre del producto"
                 autocomplete="off"
-              />
+              >
               <p v-if="fieldErrors.lastName" class="text-sm text-red-600">
                 {{ fieldErrors.lastName }}
               </p>
@@ -301,7 +320,7 @@ watch(newProduct, checkValidations, { deep: true });
                       : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
                   ]"
                   placeholder="0"
-                />
+                >
                 <p v-if="fieldErrors.salary" class="text-sm text-red-600">
                   {{ fieldErrors.salary }}
                 </p>
@@ -326,7 +345,7 @@ watch(newProduct, checkValidations, { deep: true });
                       ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                       : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
                   ]"
-                />
+                >
                 <p v-if="fieldErrors.hireDate" class="text-sm text-red-600">
                   {{ fieldErrors.hireDate }}
                 </p>
@@ -343,7 +362,7 @@ watch(newProduct, checkValidations, { deep: true });
               :class="isSubmitting ? 'cursor-progress' : 'cursor-pointer'"
               icon="i-lucide-save"
             >
-              {{ isSubmitting ? "Guardando..." : "Guardar producto" }}
+              {{ isSubmitting ? "Guardando..." : "Guardar empleado" }}
             </UButton>
             <UButton
               type="button"
@@ -385,6 +404,6 @@ watch(newProduct, checkValidations, { deep: true });
         </dl>
       </section> -->
       </div>
-    </UPageSection>
+    <!-- </UPageSection> -->
   </div>
 </template>
