@@ -2,19 +2,63 @@
 import type { NavigationMenuItem } from "@nuxt/ui";
 
 const { user } = useUserSession();
+const route = useRoute();
+
+const allItems = computed<SidebarItem[]>(() => [
+  {
+    label: "Inicio",
+    icon: "i-lucide-house",
+    to: "/dashboard",
+    active: route.path === "/dashboard",
+  },
+  {
+    label: "Empleados",
+    icon: "lucide:users",
+    to: "/dashboard/employees",
+    active: route.path.startsWith("/dashboard/employees"),
+    roles: ["SUPER_ADMIN", "MANAGER"],
+  },
+  {
+    label: "Pacientes",
+    icon: "lucide:users",
+    to: "/dashboard",
+    active: route.path.startsWith("/dashboard/patients"),
+    roles: ["SUPER_ADMIN", "MANAGER", "EMPLOYEE"],
+  },
+  {
+    label: "Centros",
+    icon: "lucide:building-2",
+    to: "/dashboard/centers",
+    active: route.path.startsWith("/dashboard/centers"),
+    roles: ["SUPER_ADMIN"],
+  },
+]);
+
+const sidebarItems = computed<NavigationMenuItem[]>(() => {
+  const role = user.value?.role;
+
+  return allItems.value.filter((item) => {
+    if (!item.roles) return true;
+    if (!role) return false;
+
+    return item.roles.includes(role);
+  });
+});
+
 
 const items: NavigationMenuItem[][] = [
   [
     {
       label: "Inicio",
       icon: "i-lucide-house",
-      active: true,
-      to: "/",
+      to: "/dashboard",
+      active: route.path === "/dashboard",
     },
     {
       label: "Empleados",
       icon: "lucide:users",
-      to: '/dashboard/employees'
+      to: "/dashboard/employees",
+      active: route.path.startsWith("/dashboard/employees"),
     },
     {
       label: "Pacientes",
@@ -35,7 +79,7 @@ const items: NavigationMenuItem[][] = [
     {
       label: "Expedientes",
       icon: "lucide:folder",
-    }
+    },
   ],
   [
     {
@@ -85,7 +129,7 @@ const items: NavigationMenuItem[][] = [
 
       <UNavigationMenu
         :collapsed="collapsed"
-        :items="items[0]"
+        :items="sidebarItems"
         orientation="vertical"
       />
 
@@ -102,7 +146,7 @@ const items: NavigationMenuItem[][] = [
         to="https://github.com/benjamincanac"
         target="_blank"
         :name="collapsed ? '' : user?.name"
-        :description="collapsed ? '' : user?.role"
+        :description="collapsed ? '' : getRoleName(user?.role)"
         :avatar="{
           src: 'https://github.com/benjamincanac.png',
         }"

@@ -2,6 +2,12 @@
 import { h, resolveComponent } from "vue";
 import type { TableColumn } from "@nuxt/ui";
 
+definePageMeta({
+  middleware: ["role"],
+  roles: ["SUPER_ADMIN", "MANAGER"],
+});
+
+
 const employeeToDeactivate = ref<Employee | null>(null);
 const isDeactivateModalOpen = ref(false);
 const isDeactivating = ref(false);
