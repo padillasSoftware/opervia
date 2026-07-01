@@ -124,6 +124,7 @@ async function onSubmit(payload: FormSubmitEvent<Schema>) {
         color="primary"
         variant="ghost"
         label="¿Olvidaste tu contraseña?"
+        to="/forgot-password"
       />
 
       <p class="text-xs text-muted">© 2026 Maelmar</p>
