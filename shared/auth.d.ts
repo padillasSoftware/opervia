@@ -9,6 +9,7 @@ declare module '#auth-utils' {
       centerName: string;
       employeeId?: string;
       name: string;
+      lastLoginAt: Date | null
   }
 // Define any additional data you want to store in the session
   interface UserSession {
