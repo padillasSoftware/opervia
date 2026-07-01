@@ -11,6 +11,7 @@ export const positionNames = {
   ACCOUNTANT: "Contador",
   ASSISTANT: "Asistente",
   INTERN: "Practicante",
+  SUPER_ADMIN: "Administrador del Sistema",
 } as const;
 
 export type Position = keyof typeof positionNames;
