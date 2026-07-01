@@ -37,19 +37,7 @@ export default defineEventHandler(async (event) => {
 
   const isPasswordValid = bcrypt.compareSync(password, user.passwordHash);
 
-  const userSession = {
-      id: user.id,
-      email: user.email,
-      role: user.role.name,
-      centerId: user.center.id,
-      centerName: user.center.name,
-      employeeId: user.employee?.id,
-      name: `${user.employee?.firstName} ${user.employee?.lastName}`
-  };
 
-  await setUserSession(event, {
-    user: userSession,
-  });
 
   if (!isPasswordValid) {
     throw errorHandler(
@@ -60,8 +48,7 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-
- if (!user.isActive) {
+  if (!user.isActive) {
     throw errorHandler(
       HttpStatus.UNAUTHORIZED,
       HttpStatus.UNAUTHORIZED,
@@ -70,11 +57,27 @@ export default defineEventHandler(async (event) => {
     );
   }
 
+  const userSession = {
+    id: user.id,
+    email: user.email,
+    role: user.role.name,
+    centerId: user.center.id,
+    centerName: user.center.name,
+    employeeId: user.employee?.id,
+    name: `${user.employee?.firstName} ${user.employee?.lastName}`,
+    lastLoginAt: user.lastLoginAt ?? null,
+  };
+
+    await setUserSession(event, {
+      user: userSession,
+    });
+  
+
   return {
     status: HttpStatus.OK,
     statusCode: HttpStatus.OK,
     data: {
       user: userSession,
-    }
+    },
   };
 });

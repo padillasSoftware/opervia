@@ -50,7 +50,7 @@ async function main() {
       },
     });
 
-    if (userData.role !== "SUPER_ADMIN") {
+    
       await prisma.employee.upsert({
         where: { userId: user.id },
         update: {
@@ -68,7 +68,7 @@ async function main() {
           hireDate: new Date(),
         },
       });
-    }
+    
   }
 
   console.log("Seed executed successfully");
