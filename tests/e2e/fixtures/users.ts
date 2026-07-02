@@ -13,7 +13,7 @@ export const users = {
     id: "admin-test-id",
     email: "admin@test.com",
     name: "Administrador Test",
-    centerName: "Centro de prueba",
+    centerName: "Centro de pruebas",
     lastLoginAt: new Date().toISOString(),
     role: "MANAGER",
     loggedIn: true,
