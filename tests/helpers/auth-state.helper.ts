@@ -13,11 +13,6 @@ export async function createStorageState(
     },
   });
 
-  const body = await response.text();
-
-  console.log("LOGIN STATUS:", response.status());
-  console.log("LOGIN BODY:", body);
-
   expect(response.status()).toBe(200);
 
   await page.goto("/dashboard");
