@@ -5,6 +5,7 @@ test.describe("Dashboard - Super Admin", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/dashboard");
 
+    //Fix require-test actions
     await expect(page).toHaveURL(/\/dashboard/);
   });
 

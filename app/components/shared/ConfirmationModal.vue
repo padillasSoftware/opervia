@@ -15,6 +15,8 @@ defineProps<{
 const emit = defineEmits<{
   confirm: [];
 }>();
+
+//Prueba de commit en el require-tests action
 </script>
 
 <template>
