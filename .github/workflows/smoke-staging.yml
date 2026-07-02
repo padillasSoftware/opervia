@@ -94,14 +94,34 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Create PR staging to main
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          git fetch origin main staging
+
+          EXISTING_PR_COUNT=$(gh pr list \
+            --base main \
+            --head staging \
+            --state open \
+            --json number \
+            --jq 'length')
+
+          if [ "$EXISTING_PR_COUNT" != "0" ]; then
+            echo "Production PR already exists."
+            exit 0
+          fi
+
+          if git diff --quiet origin/main...origin/staging; then
+            echo "No commits to promote from staging to main."
+            exit 0
+          fi
+
           gh pr create \
             --base main \
             --head staging \
             --title "Promote staging to production" \
-            --body "Automated promotion after staging smoke tests passed." \
-          || echo "Production PR already exists."
-        env:
-          GH_TOKEN: ${{ github.token }}
+            --body "Automated promotion after staging smoke tests passed."
