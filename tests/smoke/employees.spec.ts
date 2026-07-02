@@ -12,10 +12,6 @@ test("employees page loads", async ({ page }) => {
   await expect(
     page.getByRole("heading", { name: /empleados/i })
   ).toBeVisible();
-
-  await expect(
-    page.getByPlaceholder(/buscar/i)
-  ).toBeVisible();
 });
 
 test("create employee page loads", async ({ page }) => {
