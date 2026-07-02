@@ -11,8 +11,11 @@ test.describe("Sign in", () => {
   test("shows error with invalid credentials", async ({ page }) => {
     await login(page, "wrong@email.com", "wrong-password");
 
-    await expect(page.getByRole("alert")).toContainText(
-      /error al iniciar sesión/i,
-    );
+    await expect(
+      page
+        .getByRole("alert")
+        .filter({ hasText: /error al iniciar sesión/i })
+        .first(),
+    ).toBeVisible();
   });
 });
