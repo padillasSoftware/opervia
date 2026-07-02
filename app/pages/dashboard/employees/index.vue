@@ -237,11 +237,12 @@ const deactivateEmployeeData = async () => {
         color="primary"
         size="lg"
         :to="`/dashboard/employees/employee/new`"
+        data-testid="add-employee-button"
       />
     </div>
 
     <ClientOnly>
-      <SharedTable :data="employees" :columns="productColumns" />
+      <SharedTable :data="employees" :columns="productColumns" data-test-id="employees-table"  input-data-test-id="employees-search-input" />
       <SharedConfirmationModal
         v-model="isDeactivateModalOpen"
         :title="confirmationModal.title"
