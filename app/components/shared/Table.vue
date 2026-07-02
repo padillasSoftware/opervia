@@ -7,6 +7,8 @@ const table = useTemplateRef("table");
 defineProps<{
   data: T[];
   columns: TableColumn<T>[];
+  dataTestId?: string;
+  inputDataTestId?: string;
 }>();
 
 const pagination = ref({
@@ -20,7 +22,7 @@ const globalFilter = ref("");
 <template>
   <div class="w-full space-y-4 pb-4">
     <div class="flex px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Buscar Empleado..." />
+      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Buscar..." :data-testid="inputDataTestId"/>
     </div>
 
     <UTable
@@ -29,6 +31,7 @@ const globalFilter = ref("");
       v-model:global-filter="globalFilter"
       :data="data"
       :columns="columns"
+      :data-testid="dataTestId"
       :pagination-options="{
         getPaginationRowModel: getPaginationRowModel(),
       }"

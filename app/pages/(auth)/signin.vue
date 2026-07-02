@@ -17,7 +17,7 @@ const cookieLoginEmail = useCookie<string | null>("login_email", {
 const { login } = useAuthentication();
 const isPosting = ref(false);
 
-const fields: AuthFormField[] = [
+const fields = computed<AuthFormField[]>(() => [
   {
     name: "email",
     type: "email",
@@ -39,7 +39,7 @@ const fields: AuthFormField[] = [
     type: "checkbox",
     defaultValue: Boolean(cookieLoginEmail.value),
   },
-];
+]);
 
 const schema = z.object({
   email: z.email("Correo electrónico inválido"),
