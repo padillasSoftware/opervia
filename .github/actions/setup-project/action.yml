@@ -1,0 +1,41 @@
+name: Setup Project
+description: Setup Node, install dependencies, generate Prisma client, and optionally install Playwright.
+
+inputs:
+  node-version:
+    description: Node version
+    required: false
+    default: "24"
+
+  generate-prisma:
+    description: Generate Prisma client
+    required: false
+    default: "true"
+
+  install-playwright:
+    description: Install Playwright Chromium
+    required: false
+    default: "false"
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: npm
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
+
+    - name: Generate Prisma Client
+      if: ${{ inputs.generate-prisma == 'true' }}
+      shell: bash
+      run: npm run prisma:generate
+
+    - name: Install Playwright browsers
+      if: ${{ inputs.install-playwright == 'true' }}
+      shell: bash
+      run: npx playwright install --with-deps chromium
