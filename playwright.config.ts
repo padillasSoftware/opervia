@@ -4,6 +4,7 @@ import "dotenv/config";
 import { defineConfig, devices } from "@playwright/test";
 
 const isCI = !!process.env.CI;
+const isExternalBaseURL = !!process.env.BASE_URL;
 
 export default defineConfig({
   testDir: "./tests",
@@ -35,7 +36,10 @@ export default defineConfig({
     },
     {
       name: "authenticated",
-      testMatch: "**/e2e/authenticated/**/*.spec.ts",
+      testMatch: [
+        "**/e2e/authenticated/**/*.spec.ts",
+        "**/smoke/**/*.spec.ts",
+      ],
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/superadmin.json",
@@ -43,10 +47,12 @@ export default defineConfig({
       dependencies: ["setup"],
     },
   ],
-  webServer: {
-    command: isCI ? "npx nuxt build && npx nuxt preview" : "npm run dev",
-    url: "http://localhost:3000",
-    reuseExistingServer: !isCI,
-    timeout: 120_000,
-  },
+  webServer: isExternalBaseURL
+    ? undefined
+    : {
+        command: isCI ? "npx nuxt build && npx nuxt preview" : "npm run dev",
+        url: "http://localhost:3000",
+        reuseExistingServer: !isCI,
+        timeout: 120_000,
+      },
 });
