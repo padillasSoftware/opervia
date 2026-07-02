@@ -27,25 +27,28 @@ export default defineConfig({
       testMatch: "**/auth.setup.ts",
     },
     {
-      name: "public",
-      testMatch: "**/e2e/public/**/*.spec.ts",
-      use: {
-        ...devices["Desktop Chrome"],
-        storageState: { cookies: [], origins: [] },
-      },
-    },
-    {
-      name: "authenticated",
-      testMatch: [
-        "**/e2e/authenticated/**/*.spec.ts",
-        "**/smoke/**/*.spec.ts",
-      ],
-      use: {
-        ...devices["Desktop Chrome"],
-        storageState: "playwright/.auth/superadmin.json",
-      },
-      dependencies: ["setup"],
-    },
+  name: "public",
+  testMatch: [
+    "**/e2e/public/**/*.spec.ts",
+    "**/smoke/public/**/*.spec.ts",
+  ],
+  use: {
+    ...devices["Desktop Chrome"],
+    storageState: { cookies: [], origins: [] },
+  },
+},
+{
+  name: "authenticated",
+  testMatch: [
+    "**/e2e/authenticated/**/*.spec.ts",
+    "**/smoke/authenticated/**/*.spec.ts",
+  ],
+  use: {
+    ...devices["Desktop Chrome"],
+    storageState: "playwright/.auth/superadmin.json",
+  },
+  dependencies: ["setup"],
+},
   ],
   webServer: isExternalBaseURL
     ? undefined
