@@ -21,7 +21,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
 
       - name: Install dependencies
@@ -34,6 +34,13 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
+        env:
+          QA_SUPERADMIN_EMAIL: ${{ secrets.QA_SUPERADMIN_EMAIL }}
+          QA_SUPERADMIN_PASSWORD: ${{ secrets.QA_SUPERADMIN_PASSWORD }}
+          QA_MANAGER_EMAIL: ${{ secrets.QA_MANAGER_EMAIL }}
+          QA_MANAGER_PASSWORD: ${{ secrets.QA_MANAGER_PASSWORD }}
+          QA_EMPLOYEE_EMAIL: ${{ secrets.QA_EMPLOYEE_EMAIL }}
+          QA_EMPLOYEE_PASSWORD: ${{ secrets.QA_EMPLOYEE_PASSWORD }}
         run: npx playwright test
 
       - name: Upload Playwright report
