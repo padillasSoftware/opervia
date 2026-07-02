@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { users } from "../e2e/fixtures/users";
-
+// Smoke check for staging dashboard
  test.use({
     storageState: "playwright/.auth/superadmin.json",
   });
