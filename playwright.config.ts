@@ -1,36 +1,38 @@
 /// <reference types="node" />
 
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from "@playwright/test";
+
+const isCI = !!process.env.CI;
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: "./tests/e2e",
   timeout: 30_000,
   expect: {
-    timeout: 10_000
+    timeout: 10_000,
   },
   fullyParallel: true,
-  retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI
-    ? [['html'], ['github'], ['list']]
-    : [['html'], ['list']],
+  retries: isCI ? 1 : 0,
+  reporter: isCI
+    ? [["html"], ["github"], ["list"]]
+    : [["html"], ["list"]],
   use: {
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure'
+    baseURL: process.env.BASE_URL || "http://localhost:3000",
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
+    video: "retain-on-failure",
   },
   projects: [
     {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] }
-    }
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+    },
   ],
-  webServer: process.env.CI
-    ? {
-        command: 'npx nuxt build && npx nuxt preview',
-        url: 'http://localhost:3000',
-        reuseExistingServer: false,
-        timeout: 120_000
-      }
-    : undefined
-})
+  webServer: {
+    command: isCI
+      ? "npx nuxt build && npx nuxt preview"
+      : "npm run dev",
+    url: "http://localhost:3000",
+    reuseExistingServer: !isCI,
+    timeout: 120_000,
+  },
+});

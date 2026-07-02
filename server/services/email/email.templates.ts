@@ -187,7 +187,7 @@ export const resetPasswordTemplate = (params: {
       </p>
 
       ${infoBox(`
-        <span style="color:#374151;">
+        <span style="color:${brand.muted};">
           Si tú no solicitaste este cambio, puedes ignorar este correo.
         </span>
       `)}

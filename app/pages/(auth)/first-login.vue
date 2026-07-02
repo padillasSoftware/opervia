@@ -1,4 +1,3 @@
-import { SharedPasswordForm } from '../../../.nuxt/components';
 <script setup lang="ts">
 definePageMeta({
   layout: "auth-layout",
