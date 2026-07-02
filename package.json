@@ -15,7 +15,11 @@
     "seed": "tsx seed/seed.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "sync": "./scripts/sync-branches.sh",
+    "setup": "./scripts/setup.sh",
+    "clean": "./scripts/clean.sh",
+    "release": "./scripts/release.sh"
   },
   "dependencies": {
     "@nuxt/ui": "^4.9.0",
