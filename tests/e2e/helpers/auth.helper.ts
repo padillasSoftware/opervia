@@ -1,12 +1,13 @@
-import type { Page } from '@playwright/test'
+import type { Page } from "@playwright/test";
 
-export async function login(page: Page, email: string, password: string) {
-  await page.goto('/signin')
+export async function login(
+  page: Page,
+  email: string,
+  password: string
+) {
+  await page.getByRole("textbox", { name: "Correo electrónico" }).fill(email);
 
-  await page.getByLabel(/correo|email/i).fill(email)
-  await page.getByLabel(/contraseña|password/i).fill(password)
+  await page.getByLabel("Contraseña").fill(password);
 
-  await page.getByRole('button', {
-    name: /iniciar sesión|ingresar|login/i
-  }).click()
+  await page.getByRole("button", { name: "Iniciar sesión" }).click();
 }
