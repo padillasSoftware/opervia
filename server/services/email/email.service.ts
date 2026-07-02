@@ -16,16 +16,6 @@ import type {
 const getTransporter = () => {
   const config = useRuntimeConfig();
 
-  console.log({
-    host: config.smtpHost,
-    port: Number(config.smtpPort),
-    secure: config.smtpSecure === "true",
-    auth: {
-      user: config.smtpUser,
-      pass: config.smtpPass,
-    },
-  })
-
   return nodemailer.createTransport({
     host: config.smtpHost,
     port: Number(config.smtpPort),

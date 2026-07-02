@@ -15,7 +15,6 @@ export const useAuthentication = () => {
 
       await fetch();
 
-      console.log(user.value, session.value, loggedIn.value,result.data)
      if( result.data?.user.lastLoginAt === null ) {
         await navigateTo('/first-login', {replace: true})
         return result;

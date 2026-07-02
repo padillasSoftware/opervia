@@ -24,7 +24,6 @@ const handleSubmit = async (payload: {
       method: "PATCH"
     });
 
-    console.log(result)
     if (result.statusCode !== HttpStatus.OK) {
       throw new Error("Error al actualizar la fecha de último inicio de sesión");
     }
