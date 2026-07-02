@@ -1,9 +1,12 @@
-name: Require Tests
+name: 02 Require Tests
 
 on:
   pull_request:
     branches:
       - staging
+
+permissions:
+  contents: read
 
 jobs:
   require-tests:
@@ -11,25 +14,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Detect changed files
-        uses: dorny/paths-filter@v3
-        id: changes
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          filters: |
-            app:
-              - 'app/pages/**'
-              - 'app/components/**'
-              - 'app/composables/**'
-              - 'server/api/**'
-              - 'server/utils/**'
-              - 'server/middleware/**'
-            tests:
-              - 'tests/**'
+          fetch-depth: 0
 
-      - name: Require tests when app changes
-        if: steps.changes.outputs.app == 'true' && steps.changes.outputs.tests != 'true'
-        run: |
-          echo "Cambiaste app/server pero no agregaste o modificaste tests."
-          exit 1
+      - name: Require tests for application changes
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: node .github/scripts/require-tests.mjs
