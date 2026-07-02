@@ -1,4 +1,4 @@
-name: QA PR
+name: 03 QA PR
 
 on:
   pull_request:
@@ -22,20 +22,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Setup project
+        uses: ./.github/actions/setup-project
         with:
-          node-version: 24
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Generate Prisma Client
-        run: npx prisma generate
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+          install-playwright: "true"
 
       - name: Run Playwright tests
         env:
@@ -64,7 +54,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
           PR_URL: ${{ github.event.pull_request.html_url }}
-        run: |
-          gh pr merge "$PR_URL" --squash --delete-branch
-
-  
+        run: gh pr merge "$PR_URL" --squash --delete-branch
