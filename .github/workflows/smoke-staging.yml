@@ -97,14 +97,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Create PR staging to main
+      - name: Create PR staging to master
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          git fetch origin main staging
+          git fetch origin master staging
 
           EXISTING_PR_COUNT=$(gh pr list \
-            --base main \
+            --base master \
             --head staging \
             --state open \
             --json number \
@@ -115,13 +115,13 @@ jobs:
             exit 0
           fi
 
-          if git diff --quiet origin/main...origin/staging; then
-            echo "No commits to promote from staging to main."
+          if git diff --quiet origin/master...origin/staging; then
+            echo "No commits to promote from staging to master."
             exit 0
           fi
 
           gh pr create \
-            --base main \
+            --base master \
             --head staging \
             --title "Promote staging to production" \
             --body "Automated promotion after staging smoke tests passed."
