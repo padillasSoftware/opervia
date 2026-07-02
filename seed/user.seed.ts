@@ -4,6 +4,6 @@ export const users = [
     role: 'SUPER_ADMIN',
     firstName: 'Maelmar',
     lastName: 'Admin',
-    position: 'Platform Administrator'
+    position: 'SUPER_ADMIN',
   }
 ]

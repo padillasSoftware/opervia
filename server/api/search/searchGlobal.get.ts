@@ -81,7 +81,7 @@ export default defineEventHandler(async (event) => {
       type: "employee",
       label: `${employee.firstName} ${employee.lastName}`,
       suffix: employee.user.email,
-      to: `/dashboard/employees/${employee.id}`,
+      to: `/dashboard/employees/employee/${employee.id}`,
       icon: "i-lucide-user",
       meta: {
         role: employee.user.role.name,
