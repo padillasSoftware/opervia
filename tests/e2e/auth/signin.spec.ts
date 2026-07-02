@@ -8,11 +8,11 @@ test.describe("Sign in", () => {
     await page.waitForTimeout(3000);
   });
 
- test('shows error with invalid credentials', async ({ page }) => {
-    await login(page, 'wrong@email.com', 'wrong-password')
+  test("shows error with invalid credentials", async ({ page }) => {
+    await login(page, "wrong@email.com", "wrong-password");
 
-    await expect(
-      page.getByText('Error al iniciar sesión', { exact: true })
-    ).toBeVisible()
-  })
+    await expect(page.getByRole("alert")).toContainText(
+      /error al iniciar sesión/i,
+    );
+  });
 });
