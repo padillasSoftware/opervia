@@ -53,7 +53,7 @@ const emit = defineEmits<{
             variant="soft"
             :label="cancelLabel ?? 'Cancelar'"
             :disabled="loading"
-            @click="open = false"
+            @click="() => { open = false }"
           />
 
           <UButton

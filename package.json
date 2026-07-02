@@ -3,18 +3,21 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "prisma generate && npm run seed && nuxt build",
     "dev": "nuxt dev",
+    "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "typecheck": "nuxt typecheck",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
     "seed": "tsx seed/seed.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
-    "@nuxt/eslint": "^1.16.0",
     "@nuxt/ui": "^4.9.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
@@ -36,7 +39,6 @@
     "@tiptap/suggestion": "^3.27.1",
     "@tiptap/vue-3": "^3.27.1",
     "bcryptjs": "^3.0.3",
-    "eslint": "^10.5.0",
     "nodemailer": "^9.0.1",
     "nuxt": "^4.4.8",
     "nuxt-auth-utils": "^0.5.29",
@@ -49,12 +51,15 @@
   },
   "devDependencies": {
     "@iconify-json/lucide": "^1.2.114",
+    "@nuxt/eslint": "^1.16.0",
     "@playwright/test": "^1.61.1",
     "@types/node": "^26.0.1",
     "@types/nodemailer": "^8.0.1",
     "@types/pg": "^8.20.0",
     "dotenv": "^17.4.2",
+    "eslint": "^10.6.0",
     "prisma": "^7.8.0",
-    "tsx": "^4.22.4"
+    "tsx": "^4.22.4",
+    "vue-tsc": "^3.3.6"
   }
 }
