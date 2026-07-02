@@ -16,8 +16,8 @@ jobs:
 
     env:
       BASE_URL: ${{ secrets.STAGING_URL }}
-      QA_SUPERADMIN_EMAIL: ${{ secrets.STAGING_SUPERADMIN_EMAIL }}
-      QA_SUPERADMIN_PASSWORD: ${{ secrets.STAGING_SUPERADMIN_PASSWORD }}
+      STAGING_SUPERADMIN_EMAIL: ${{ secrets.STAGING_SUPERADMIN_EMAIL }}
+      STAGING_SUPERADMIN_PASSWORD: ${{ secrets.STAGING_SUPERADMIN_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v4
