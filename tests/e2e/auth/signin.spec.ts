@@ -8,10 +8,11 @@ test.describe("Sign in", () => {
     await page.waitForTimeout(3000);
   });
 
-  test("shows error with invalid credentials", async ({ page }) => {
+ test('shows error with invalid credentials', async ({ page }) => {
+    await login(page, 'wrong@email.com', 'wrong-password')
 
     await expect(
-      page.getByText(/credenciales|incorrect|inválid|error/i),
-    ).toBeVisible();
-  });
+      page.getByText('Error al iniciar sesión', { exact: true })
+    ).toBeVisible()
+  })
 });
