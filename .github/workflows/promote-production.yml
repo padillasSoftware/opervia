@@ -1,0 +1,56 @@
+name: 05 Promote Production
+
+on:
+  workflow_run:
+    workflows:
+      - 04 Smoke Staging
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  promote:
+    name: Create Production PR
+    runs-on: ubuntu-latest
+
+    if: >
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == 'staging'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create PR staging to master
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          git fetch origin master staging
+
+          EXISTING_PR_COUNT=$(gh pr list \
+            --base master \
+            --head staging \
+            --state open \
+            --json number \
+            --jq 'length')
+
+          if [ "$EXISTING_PR_COUNT" != "0" ]; then
+            echo "Production PR already exists."
+            exit 0
+          fi
+
+          if git diff --quiet origin/master origin/staging; then
+            echo "No file changes to promote from staging to master."
+            exit 0
+          fi
+
+          gh pr create \
+            --base master \
+            --head staging \
+            --title "Promote staging to production" \
+            --body "Automated promotion after staging smoke tests passed."
