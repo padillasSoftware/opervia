@@ -13,7 +13,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
     "seed": "tsx seed/seed.ts",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --headed",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report",
     "sync": "./scripts/sync-branches.sh",

@@ -18,14 +18,14 @@ export async function createEmployeeByApi(request: APIRequestContext) {
   });
 
   const text = await response.text();
-
+  console.log(text);
   if (!response.ok()) {
     throw new Error(
       `Failed to create employee: ${response.status()} ${text}`,
     );
   }
 
-  console.log(text);
+
   const body = JSON.parse(text);
 
   return {

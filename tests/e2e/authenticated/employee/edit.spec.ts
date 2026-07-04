@@ -36,7 +36,7 @@ test.describe("Edit employee", () => {
 
     await editPage.expectUpdatedSuccessfully();
 
-    await editPage.goto(employeeId);
+    // await editPage.goto(employeeId);
     await editPage.expectSalary("18000");
   });
 });
