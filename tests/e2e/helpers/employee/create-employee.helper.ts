@@ -25,6 +25,7 @@ export async function createEmployeeByApi(request: APIRequestContext) {
     );
   }
 
+  console.log(text);
   const body = JSON.parse(text);
 
   return {
