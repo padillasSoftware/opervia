@@ -21,6 +21,11 @@ export async function createEmployeeByApi(request: APIRequestContext) {
     throw new Error(`Failed to create employee: ${response.status()} ${await response.text()}`);
   }
 
+  const text = await response.text();
+
+  console.log(response.status());
+  console.log(text);
+
   const body = await response.json();
 
   return {
