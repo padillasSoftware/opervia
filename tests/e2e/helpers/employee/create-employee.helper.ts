@@ -17,16 +17,15 @@ export async function createEmployeeByApi(request: APIRequestContext) {
     },
   });
 
-  if (!response.ok()) {
-    throw new Error(`Failed to create employee: ${response.status()} ${await response.text()}`);
-  }
-
   const text = await response.text();
 
-  console.log(response.status());
-  console.log(text);
+  if (!response.ok()) {
+    throw new Error(
+      `Failed to create employee: ${response.status()} ${text}`,
+    );
+  }
 
-  const body = await response.json();
+  const body = JSON.parse(text);
 
   return {
     employee,
