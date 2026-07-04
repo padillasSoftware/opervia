@@ -6,7 +6,8 @@ export async function fillInput(input: Locator, value: string) {
     process.platform === "darwin" ? "Meta+A" : "Control+A"
   );
   await input.press("Backspace");
-  await input.pressSequentially(value, { delay: 50 });
+  await input.pressSequentially(value, { delay: 500 });
 
+  cononsole.log(value)
   await expect(input).toHaveValue(value);
 }

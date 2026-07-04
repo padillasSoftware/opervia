@@ -13,6 +13,13 @@ export async function createStorageState(
     },
   });
 
+  if (!response.ok()) {
+  const text = await response.text();
+  console.log("STATUS:", response.status());
+  console.log("BODY:", text);
+  throw new Error("Failed to create employee by API");
+}
+
   expect(response.status()).toBe(200);
 
   await page.goto("/dashboard");
