@@ -19,6 +19,7 @@ const isPosting = ref(false);
 
 const fields = computed<AuthFormField[]>(() => [
   {
+    id: "signin-email-input",
     name: "email",
     type: "email",
     label: "Correo electrónico",
@@ -27,6 +28,7 @@ const fields = computed<AuthFormField[]>(() => [
     defaultValue: cookieLoginEmail.value || "",
   },
   {
+    id: "signin-password-input",
     name: "password",
     label: "Contraseña",
     type: "password",
@@ -34,6 +36,7 @@ const fields = computed<AuthFormField[]>(() => [
     required: true,
   },
   {
+    id: "signin-remember-checkbox",
     name: "remember",
     label: "Recuérdame",
     type: "checkbox",
