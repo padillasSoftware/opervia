@@ -21,5 +21,4 @@ export interface EmployeeDto {
     hireDate: string;
     password: string;
     centerId: string;
-    fullName: string;
 }

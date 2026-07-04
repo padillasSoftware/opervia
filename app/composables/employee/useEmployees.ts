@@ -15,7 +15,10 @@ export const useEmployees = async () => {
     return ((route.query.search as string) || "").trim();
   });
 
-  const { data, error, status, execute, pending, refresh } = await useFetch(
+  const { data, error, status, execute, pending, refresh } = await useFetch<ApiResponse<{
+    employees: Employee[];
+    pagination: Pagination;
+  }>>(
     "/api/admin/employeesList",
     {
       query: {

@@ -205,7 +205,7 @@ watch(
                     : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
                 ]"
                 placeholder="ejemplo@text.com"
-              />
+              >
 
               <p v-if="fieldErrors.email" class="text-sm text-red-600">
                 {{ fieldErrors.email }}
@@ -235,7 +235,7 @@ watch(
               ]"
               placeholder="Nombre del empleado"
               autocomplete="off"
-            />
+            >
 
             <p v-if="fieldErrors.firstName" class="text-sm text-red-600">
               {{ fieldErrors.firstName }}
@@ -262,7 +262,7 @@ watch(
               ]"
               placeholder="Apellido del empleado"
               autocomplete="off"
-            />
+            >
 
             <p v-if="fieldErrors.lastName" class="text-sm text-red-600">
               {{ fieldErrors.lastName }}
@@ -351,7 +351,7 @@ watch(
                     : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
                 ]"
                 placeholder="0"
-              />
+              >
 
               <p v-if="fieldErrors.salary" class="text-sm text-red-600">
                 {{ fieldErrors.salary }}
@@ -378,7 +378,7 @@ watch(
                     ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                     : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
                 ]"
-              />
+              >
 
               <p v-if="fieldErrors.hireDate" class="text-sm text-red-600">
                 {{ fieldErrors.hireDate }}
