@@ -39,7 +39,7 @@ test.describe("Create employee", () => {
     await expect(page).toHaveURL(/\/dashboard\/employees/);
   });
 
-  test.only("creates employee successfully using UI selects", async ({
+  test("creates employee successfully using UI selects", async ({
     page,
   }) => {
     const employeePage = new EmployeeCreatePage(page);

@@ -26,7 +26,7 @@ test.describe("Edit employee", () => {
     await editPage.expectEmployee(employee);
   });
 
-  test.only("updates employee salary", async ({ page }) => {
+  test("updates employee salary", async ({ page }) => {
     const editPage = new EmployeeEditPage(page);
 
     await editPage.goto(employeeId);
