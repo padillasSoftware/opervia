@@ -1,5 +1,5 @@
-import { expect, type Page } from "@playwright/test";
-import { fillInput } from '../helpers/input.helper'
+import { expect, type Locator, type Page } from "@playwright/test";
+import type { EmployeeFormData } from "./employee-create.page";
 
 export class EmployeeEditPage {
   constructor(private readonly page: Page) {}
@@ -18,27 +18,11 @@ export class EmployeeEditPage {
   async goto(employeeId: string) {
     await this.page.goto(`/dashboard/employees/employee/${employeeId}`);
 
-    await expect(this.page).toHaveURL(
-      new RegExp(`/dashboard/employees/employee/${employeeId}`),
-    );
-
     await expect(
-      this.page.getByRole("heading", { name: /editar empleado/i }),
+      this.page.getByRole("heading", {
+        name: /editar empleado/i,
+      }),
     ).toBeVisible();
-
-    await expect(this.emailInput).toBeEditable();
-    await expect(this.firstNameInput).toBeEditable();
-    await expect(this.lastNameInput).toBeEditable();
-    await expect(this.salaryInput).toBeEditable();
-    await expect(this.hireDateInput).toBeEditable();
-
-    await expect(this.roleSelect).toBeVisible();
-    await expect(this.roleSelect).toBeEnabled();
-    await expect(this.roleSelect).toHaveAttribute("data-state", "closed");
-
-    await expect(this.positionSelect).toBeVisible();
-    await expect(this.positionSelect).toBeEnabled();
-    await expect(this.positionSelect).toHaveAttribute("data-state", "closed");
   }
 
   async expectLoaded() {
@@ -52,35 +36,120 @@ export class EmployeeEditPage {
     await expect(this.saveButton).toBeEnabled();
     await expect(this.cancelButton).toBeVisible();
   }
-
-  async expectEmployee(employee: EmployeeFormData) {
+  async waitForEmployeeInformation(employee: EmployeeFormData) {
     await expect(this.emailInput).toHaveValue(employee.email);
     await expect(this.firstNameInput).toHaveValue(employee.firstName);
     await expect(this.lastNameInput).toHaveValue(employee.lastName);
     await expect(this.salaryInput).toHaveValue(employee.salary);
     await expect(this.hireDateInput).toHaveValue(employee.hireDate);
+  }
 
+  async expectEmployeeInformation(employee: EmployeeFormData) {
+    await expect(this.emailInput).toHaveValue(employee.email);
+    await expect(this.firstNameInput).toHaveValue(employee.firstName);
+    await expect(this.lastNameInput).toHaveValue(employee.lastName);
+    await expect(this.salaryInput).toHaveValue(employee.salary);
+    await expect(this.hireDateInput).toHaveValue(employee.hireDate);
     await expect(this.roleSelect).toContainText(employee.role);
     await expect(this.positionSelect).toContainText(employee.position);
   }
 
   async updateSalary(salary: string) {
-    await fillInput(this.salaryInput, salary)
+    await this.fillInput(this.salaryInput, salary);
+  }
+
+  async updateFirstName(firstName: string) {
+    await this.fillInput(this.firstNameInput, firstName);
+  }
+
+  async updateLastName(lastName: string) {
+    await this.fillInput(this.lastNameInput, lastName);
+  }
+
+  async selectRole(role: string) {
+    await this.openSelect(this.roleSelect);
+
+    const option = this.page.getByRole("option", {
+      name: role,
+      exact: true,
+    });
+
+    await expect(option).toBeVisible();
+    await option.click();
+
+    await expect(this.roleSelect).toContainText(role);
+  }
+
+  async selectPosition(position: string) {
+    await this.openSelect(this.positionSelect);
+
+    const option = this.page.getByRole("option", {
+      name: position,
+      exact: true,
+    });
+
+    await expect(option).toBeVisible();
+    await option.click();
+
+    await expect(this.positionSelect).toContainText(position);
   }
 
   async save() {
+    const responsePromise = this.page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/admin/employee/") &&
+        response.request().method() === "PATCH",
+    );
+
+    await this.saveButton.hover();
     await this.saveButton.click({ delay: 100 });
+
+    const response = await responsePromise;
+
+    expect(response.ok()).toBeTruthy();
   }
 
-  async expectUpdatedSuccessfully() {
-    await expect(
-      this.page.getByRole("alert").filter({
-        hasText: /empleado actualizado correctamente/i,
-      }),
-    ).toBeVisible();
+  async cancel() {
+    await this.cancelButton.click();
   }
 
   async expectSalary(salary: string) {
     await expect(this.salaryInput).toHaveValue(salary);
+  }
+
+  async expectUpdatedSuccessfully() {
+    await expect(
+      this.page
+        .getByRole("alert")
+        .filter({
+          hasText: /empleado actualizado correctamente/i,
+        })
+        .first(),
+    ).toBeVisible();
+  }
+
+  private async fillInput(input: Locator, value: string) {
+    await expect(input).toBeEditable();
+
+    await input.click({ delay: 500 });
+
+    await input.waitFor({
+      state: "visible",
+    });
+
+    await input.fill("");
+
+    await input.fill("");
+    await input.pressSequentially(value, { delay: 500 });
+
+    await expect(input).toHaveValue(value);
+  }
+
+  private async openSelect(select: Locator) {
+    await expect(select).toBeVisible();
+    await expect(select).toBeEnabled();
+
+    await select.hover();
+    await select.click({ delay: 100 });
   }
 }

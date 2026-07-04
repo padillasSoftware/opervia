@@ -15,7 +15,7 @@ export const useEmployee = async (id: string) => {
         },
       );
 
-      await refresh();
+      // await refresh();
 
       return {
         statusCode,

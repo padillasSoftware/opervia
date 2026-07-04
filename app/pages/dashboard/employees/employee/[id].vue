@@ -9,9 +9,10 @@ definePageMeta({
 
 const route = useRoute();
 const toast = useToast();
+const { user } = useUserSession();
 
 const rawId = route.params.id as string;
-const { user } = useUserSession();
+
 const {
   data: product,
   error,
@@ -27,6 +28,7 @@ const newProduct = ref<EmployeeDto | null>(null);
 const isSubmitting = ref(false);
 const hasSubmitted = ref(false);
 const fieldErrors = ref<Record<string, string>>({});
+const hasInitializedForm = ref(false);
 
 const roles = ref<SelectItem[]>([
   {
@@ -73,12 +75,14 @@ const normalizeHireDate = (value?: string | Date) => {
 watch(
   product,
   (employee) => {
-    if (!employee || newProduct.value) return;
+    if (!employee || hasInitializedForm.value) return;
 
     newProduct.value = {
       ...(employee as EmployeeDto),
       hireDate: normalizeHireDate((employee as EmployeeDto).hireDate),
     };
+
+    hasInitializedForm.value = true;
   },
   { immediate: true },
 );
@@ -102,7 +106,7 @@ const checkValidations = () => {
 
   return true;
 };
-
+const isFormReady = computed(() => !!newProduct.value);
 const handleSubmit = async () => {
   if (!newProduct.value) return;
 
@@ -111,15 +115,19 @@ const handleSubmit = async () => {
 
   const isFormValid = checkValidations();
 
+  await nextTick();
+
   if (!isFormValid) {
     isSubmitting.value = false;
     return;
   }
 
-  newProduct.value.centerId = user.value?.centerId ?? "";
-  const result = await updateEmployee(newProduct.value);
+  const employeeToUpdate = {
+    ...newProduct.value,
+    centerId: user.value?.centerId ?? newProduct.value.centerId,
+  };
 
-  await nextTick();
+  const result = await updateEmployee(employeeToUpdate);
 
   if (result.statusCode === HttpStatus.OK) {
     toast.add({
@@ -180,8 +188,10 @@ watch(
       </div>
 
       <form
+        v-if="isFormReady"
         id="employee-edit-form"
         class="space-y-6"
+        :data-ready="!!newProduct"
         @submit.prevent="handleSubmit"
       >
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
