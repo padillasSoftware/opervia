@@ -36,10 +36,7 @@ export default defineConfig({
     },
     {
       name: "authenticated",
-      testMatch: [
-        "**/e2e/authenticated/**/*.spec.ts",
-        "**/smoke/**/*.spec.ts",
-      ],
+      testMatch: ["**/e2e/authenticated/**/*.spec.ts", "**/smoke/**/*.spec.ts"],
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/superadmin.json",
@@ -50,7 +47,9 @@ export default defineConfig({
   webServer: isExternalBaseURL
     ? undefined
     : {
-        command: isCI ? "npx nuxt build && npx nuxt preview" : "npm run dev",
+        command: isCI
+          ? "PLAYWRIGHT=true npx nuxt build && PLAYWRIGHT=true npx nuxt preview"
+          : "PLAYWRIGHT=true npm run dev",
         url: "http://localhost:3000",
         reuseExistingServer: !isCI,
         timeout: 120_000,

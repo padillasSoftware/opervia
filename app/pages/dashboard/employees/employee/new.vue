@@ -7,25 +7,28 @@ definePageMeta({
   roles: ["SUPER_ADMIN", "MANAGER"],
 });
 
-const route = useRoute();
+const { createEmployee } = useCreateEmployee();
+
+const router = useRouter();
 const toast = useToast();
-
-const rawId = route.params.id as string;
 const { user } = useUserSession();
-const {
-  data: product,
-  error,
-  pending,
-  updateEmployee,
-} = await useEmployee(rawId);
 
-if (error.value) {
-  console.log(error.value);
-}
+const emptyEmployee: EmployeeDto = {
+  id: "",
+  email: "",
+  firstName: "",
+  lastName: "",
+  role: "",
+  position: undefined,
+  salary: 0,
+  hireDate: "",
+  centerId: "",
+  status: "",
+  password: "",
+};
 
-const newProduct = ref<EmployeeDto | null>(null);
+const newProduct = ref<EmployeeDto>({ ...emptyEmployee });
 const isSubmitting = ref(false);
-const hasSubmitted = ref(false);
 const fieldErrors = ref<Record<string, string>>({});
 
 const roles = ref<SelectItem[]>([
@@ -48,7 +51,7 @@ const positions = getPositionOptions();
 const requiredString = (message: string) =>
   z.preprocess((value) => value ?? "", z.string().trim().nonempty(message));
 
-const employeeSchema = z.object({
+const productSchema = z.object({
   firstName: requiredString("El nombre es requerido."),
   lastName: requiredString("El apellido es requerido."),
   role: requiredString("El rol es requerido."),
@@ -60,56 +63,40 @@ const employeeSchema = z.object({
   ),
 });
 
-const normalizeHireDate = (value?: string | Date) => {
-  if (!value) return "";
-
-  if (value instanceof Date) {
-    return value.toISOString().slice(0, 10);
-  }
-
-  return value.slice(0, 10);
-};
-
-watch(
-  product,
-  (employee) => {
-    if (!employee || newProduct.value) return;
-
-    newProduct.value = {
-      ...(employee as EmployeeDto),
-      hireDate: normalizeHireDate((employee as EmployeeDto).hireDate),
-    };
-  },
-  { immediate: true },
-);
+const hasSubmitted = ref(false);
 
 const checkValidations = () => {
-  fieldErrors.value = {};
-
-  const result = employeeSchema.safeParse(newProduct.value);
+  const result = productSchema.safeParse(newProduct.value);
 
   if (!result.success) {
-    result.error.issues.forEach((issue) => {
-      const field = issue.path[0];
+    if (hasSubmitted.value) {
+      fieldErrors.value = {};
 
-      if (typeof field === "string") {
-        fieldErrors.value[field] = issue.message;
-      }
-    });
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0];
+
+        if (typeof field === "string") {
+          fieldErrors.value[field] = issue.message;
+        }
+      });
+    }
 
     return false;
   }
 
+  fieldErrors.value = {};
   return true;
 };
 
 const handleSubmit = async () => {
-  if (!newProduct.value) return;
-
   isSubmitting.value = true;
   hasSubmitted.value = true;
 
+  if (!newProduct.value) return;
+
   const isFormValid = checkValidations();
+
+  await nextTick();
 
   if (!isFormValid) {
     isSubmitting.value = false;
@@ -117,16 +104,15 @@ const handleSubmit = async () => {
   }
 
   newProduct.value.centerId = user.value?.centerId ?? "";
-  const result = await updateEmployee(newProduct.value);
-
-  await nextTick();
+  const result = await createEmployee(newProduct.value);
 
   if (result.statusCode === HttpStatus.OK) {
     toast.add({
-      title: "Empleado actualizado correctamente.",
-      description: `El empleado ${newProduct.value.firstName} ${newProduct.value.lastName} se actualizó correctamente.`,
-      color: "success",
+      title: "Empleado creado correctamente.",
+      description: `El empleado ${newProduct.value.firstName} ${newProduct.value.lastName} se creó correctamente.`,
     });
+
+    router.replace(`/dashboard/employees/employee/${result.data}`);
   } else {
     toast.add({
       title: "Error al guardar el empleado",
@@ -155,32 +141,17 @@ watch(
 </script>
 
 <template>
-  <div class="mx-auto max-w-5xl space-y-6">
-    <div
-      v-if="pending"
-      class="rounded-lg border border-gray-200 bg-white p-6 text-gray-600 shadow-sm dark:border-gray-700 dark:bg-primary/10 dark:text-gray-300"
-    >
-      Cargando Empleado...
+  <div class="mx-auto max-w-5xl space-y-5">
+    <div class="mb-8 text-center">
+      <h1 class="text-5xl font-bold">Crear Empleado</h1>
+
+      <p class="mt-2 text-lg text-muted">
+        Completa el formulario para agregar a un nuevo empleado
+      </p>
     </div>
-
-    <div
-      v-else-if="!newProduct"
-      class="rounded-lg border border-amber-200 bg-amber-50 p-6 text-amber-800 shadow-sm dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200"
-    >
-      No encontramos el empleado solicitado.
-    </div>
-
-    <template v-else>
-      <div class="mb-8 text-center">
-        <h1 class="text-5xl font-bold">Editar Empleado</h1>
-
-        <p class="mt-2 text-lg text-muted">
-          Actualiza la información del empleado seleccionado
-        </p>
-      </div>
-
+    <div v-if="newProduct" class="space-y-6">
       <form
-        id="employee-edit-form"
+        id="employee-create-form"
         class="space-y-6"
         @submit.prevent="handleSubmit"
       >
@@ -193,7 +164,6 @@ watch(
               >
                 Correo Electronico
               </label>
-
               <input
                 id="employee-email"
                 v-model="newProduct.email"
@@ -206,14 +176,12 @@ watch(
                 ]"
                 placeholder="ejemplo@text.com"
               />
-
               <p v-if="fieldErrors.email" class="text-sm text-red-600">
                 {{ fieldErrors.email }}
               </p>
             </div>
           </div>
         </div>
-
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div class="space-y-2">
             <label
@@ -222,7 +190,6 @@ watch(
             >
               Nombre(s)
             </label>
-
             <input
               id="employee-firstName"
               v-model="newProduct.firstName"
@@ -236,7 +203,6 @@ watch(
               placeholder="Nombre del empleado"
               autocomplete="off"
             />
-
             <p v-if="fieldErrors.firstName" class="text-sm text-red-600">
               {{ fieldErrors.firstName }}
             </p>
@@ -249,7 +215,6 @@ watch(
             >
               Apellido(s)
             </label>
-
             <input
               id="employee-lastName"
               v-model="newProduct.lastName"
@@ -263,7 +228,6 @@ watch(
               placeholder="Apellido del empleado"
               autocomplete="off"
             />
-
             <p v-if="fieldErrors.lastName" class="text-sm text-red-600">
               {{ fieldErrors.lastName }}
             </p>
@@ -278,6 +242,22 @@ watch(
             >
               Rol
             </label>
+            <!-- <select
+              id="employee-role"
+              v-model="newProduct.role"
+              :class="[
+                'block w-full rounded-md bg-white px-3 py-2 shadow-sm focus:outline-none dark:bg-primary/10 dark:text-gray-100',
+                fieldErrors.role
+                  ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                  : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
+              ]"
+            >
+              <option disabled value="">Selecciona un Rol..</option>
+
+              <option v-for="role in roles" :key="role.id" :value="role.id">
+                {{ role.label }}
+              </option>
+            </select> -->
 
             <USelect
               id="employee-role"
@@ -293,7 +273,6 @@ watch(
                   : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
               ]"
             />
-
             <p v-if="fieldErrors.role" class="text-sm text-red-600">
               {{ fieldErrors.role }}
             </p>
@@ -306,7 +285,6 @@ watch(
             >
               Posicion
             </label>
-
             <USelect
               id="employee-position"
               v-model="newProduct.position"
@@ -321,7 +299,6 @@ watch(
                   : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
               ]"
             />
-
             <p v-if="fieldErrors.position" class="text-sm text-red-600">
               {{ fieldErrors.position }}
             </p>
@@ -337,7 +314,6 @@ watch(
               >
                 Salario (entero)
               </label>
-
               <input
                 id="employee-salary"
                 v-model.number="newProduct.salary"
@@ -352,7 +328,6 @@ watch(
                 ]"
                 placeholder="0"
               />
-
               <p v-if="fieldErrors.salary" class="text-sm text-red-600">
                 {{ fieldErrors.salary }}
               </p>
@@ -367,7 +342,6 @@ watch(
               >
                 Fecha de Contratación
               </label>
-
               <input
                 id="employee-hireDate"
                 v-model="newProduct.hireDate"
@@ -379,7 +353,6 @@ watch(
                     : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-700',
                 ]"
               />
-
               <p v-if="fieldErrors.hireDate" class="text-sm text-red-600">
                 {{ fieldErrors.hireDate }}
               </p>
@@ -399,7 +372,6 @@ watch(
           >
             {{ isSubmitting ? "Guardando..." : "Guardar empleado" }}
           </UButton>
-
           <UButton
             id="employee-cancel-button"
             type="button"
@@ -413,6 +385,6 @@ watch(
           </UButton>
         </div>
       </form>
-    </template>
+    </div>
   </div>
 </template>

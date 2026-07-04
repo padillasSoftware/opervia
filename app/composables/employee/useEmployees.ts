@@ -1,28 +1,31 @@
 export const useEmployees = async () => {
-const route = useRoute();
+  const route = useRoute();
 
   const page = computed(() => {
     const pageParam = route.query.page as string;
-    return isNaN(+pageParam) ? 1 : +pageParam;
+    return Number.isNaN(Number(pageParam)) ? 1 : Number(pageParam);
   });
 
   const limit = computed(() => {
     const limitParam = route.query.limit as string;
-    return isNaN(+limitParam) ? 10 : +limitParam;
+    return Number.isNaN(Number(limitParam)) ? 10 : Number(limitParam);
   });
 
-  const offset = computed(() => {
-    return (page.value - 1) * limit.value;
+  const search = computed(() => {
+    return ((route.query.search as string) || "").trim();
   });
 
-  const { data, error, status, execute, pending } = await useFetch(
-    '/api/admin/employeesList',
+  const { data, error, status, execute, pending, refresh } = await useFetch(
+    "/api/admin/employeesList",
     {
-        query: { limit, offset },
-        watch: [page, limit]
+      query: {
+        page,
+        limit,
+        search,
+      },
+      watch: [page, limit, search],
     },
   );
-
 
   return {
     data,
@@ -31,10 +34,11 @@ const route = useRoute();
     currentPage: computed(() => data.value?.data.pagination.currentPage || 1),
     total: computed(() => data.value?.data.pagination.total || 0),
     perPage: computed(() => data.value?.data.pagination.perPage || 10),
-
+    search,
     error,
     status,
     execute,
     pending,
+    refresh,
   };
 };

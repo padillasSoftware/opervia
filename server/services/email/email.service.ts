@@ -30,6 +30,14 @@ const getTransporter = () => {
 export const emailService = {
   async send(payload: SendEmailPayload) {
     const config = useRuntimeConfig();
+
+    const isEmailDisabled =
+      process.env.PLAYWRIGHT === "true";
+
+    if (isEmailDisabled) {
+      console.log("[EMAIL SKIPPED]");
+      return;
+    }
     const transporter = getTransporter();
 
     const fromName = config.smtpFromName;
