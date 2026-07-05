@@ -41,7 +41,7 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/superadmin.json",
       },
-      dependencies: ["setup"],
+      // dependencies: ["setup"],
     },
   ],
   webServer: isExternalBaseURL
