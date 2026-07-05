@@ -10,6 +10,10 @@ permissions:
   contents: read
   pull-requests: write
 
+concurrency:
+  group: auto-pr-${{ github.ref_name }}
+  cancel-in-progress: true
+
 jobs:
   auto-pr-to-staging:
     runs-on: ubuntu-latest
