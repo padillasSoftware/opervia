@@ -1,5 +1,5 @@
-import "./formatDate.spec.ts";
-import "./role.spec.ts";
-import "./position.spec.ts";
-import "./responseHandler.spec.ts";
-import "./errorHandler.spec.ts";
+import "./formatDate.spec";
+import "./role.spec";
+import "./position.spec";
+import "./responseHandler.spec";
+import "./errorHandler.spec";
