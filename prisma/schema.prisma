@@ -81,8 +81,9 @@ model Employee {
 
   firstName String
   lastName  String
+  fullName  String  @default("")
 
-  position String
+  position String?
 
   salary Decimal? @db.Decimal(10, 2)
 

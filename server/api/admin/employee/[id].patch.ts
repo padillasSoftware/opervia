@@ -1,115 +1,106 @@
 import z from "zod";
-import { responseHandler } from '../../../../shared/utils/responseHandler';
+import { Prisma } from "../../../../prisma/generated/client";
+import { responseHandler } from "../../../../shared/utils/responseHandler";
 
 const employeeBodySchema = z.object({
   firstName: z.string().trim().min(1, "El nombre es requerido"),
   lastName: z.string().trim().min(1, "El apellido es requerido"),
-
   position: z.string().trim().min(1, "El puesto es requerido"),
-
   email: z.string().trim().email("Correo electrónico inválido"),
   role: z.string().trim().min(1, "El rol es requerido"),
-  centerId: z.string().trim().min(1, "El centro es requerido"),
   salary: z.coerce.number().min(1, "El salario no puede ser menor a 1."),
   hireDate: z.string().nonempty("La fecha de contratación es requerida."),
-  password: z
-    .string("La contraseña es requerida")
-    .min(8, "La contraseña debe de tener al menos 8 caracteres"),
 });
 
 export default defineEventHandler(async (event) => {
-  const id = getRouterParam(event, "id") as string;
-  const formData = await readMultipartFormData(event);
+  try {
+    const id = getRouterParam(event, "id") as string;
 
-  if (!formData || formData.length === 0) {
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Bad request",
-      message: "There is not data inside the body",
+    const body = await readValidatedBody(event, employeeBodySchema.parse);
+
+    const {
+      firstName,
+      email,
+      lastName,
+      position,
+      role,
+      salary,
+      hireDate: hireDateBody,
+    } = body;
+
+    const employee = await prisma.employee.findUnique({
+      where: { id },
     });
-  }
 
-  let dataString = "";
-
-  for (const part of formData) {
-    if (part.name === "data" && part.data) {
-      dataString = part.data.toString("utf-8");
+    if (!employee) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: "EMPLOYEE_NOT_FOUND",
+        message: "Employee not found",
+      });
     }
-  }
 
-  const body = employeeBodySchema.safeParse(JSON.parse(dataString));
-
-  if (!body.success)
-    throw createError({
-      statusCode: 400,
-      statusMessage: "Bad request",
-      message: "There is not data inside the body",
-      data: body.error,
-    });
-
-  const {
-    firstName,
-    email,
-    lastName,
-    position,
-    role,
-    centerId,
-    salary,
-    hireDate: hireDateBody,
-  } = body.data;
-
-  const employee = await prisma.employee.findUnique({
-    where: {
-      id: id,
-    },
-  });
-
-  if (!employee)
-    throw createError({
-      statusCode: 404,
-      statusMessage: "Bad request",
-      message: "Employee Not found",
-      data: body.error,
-    });
-
-  const roleDB = await prisma.role.findUniqueOrThrow({
-    where: {
-      name: role,
-    },
-  });
-
-  const hireDate = new Date(`${hireDateBody}T12:00:00.000Z`);
-
-  await prisma.$transaction(async (tx) => {
-    await tx.employee.update({
+    const roleDB = await prisma.role.findUniqueOrThrow({
       where: {
-        id: id,
-      },
-      data: {
-        firstName,
-        lastName,
-        position,
-        centerId,
-        salary,
-        hireDate,
+        name: role,
       },
     });
 
-    await tx.user.update({
-      where: {
-        id: employee.userId,
-      },
-      data: {
-        email,
-        role: {
-          connect: {
-            id: roleDB.id,
+    const hireDate = new Date(`${hireDateBody}T12:00:00.000Z`);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.employee.update({
+        where: { id },
+        data: {
+          firstName,
+          lastName,
+          position,
+          salary,
+          hireDate,
+          fullName: `${firstName} ${lastName}`,
+        },
+      });
+
+      await tx.user.update({
+        where: {
+          id: employee.userId,
+        },
+        data: {
+          email,
+          role: {
+            connect: {
+              id: roleDB.id,
+            },
           },
         },
-      },
+      });
     });
-  });
 
-  return responseHandler("Success", "success", employee.id)
+    return responseHandler("EMPLOYEE_UPDATED", "success", id);
+  } catch (error: unknown) {
+    if (error instanceof z.ZodError) {
+      throw createError({
+        statusCode: HttpStatus.BAD_REQUEST,
+        statusMessage: "VALIDATION_ERROR",
+        data: {
+          code: "VALIDATION_ERROR",
+          fields: z.treeifyError(error),
+        },
+      });
+    }
 
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === "P2002") {
+        throw createError({
+          statusCode: HttpStatus.CONFLICT,
+          statusMessage: "DUPLICATED_EMAIL",
+          data: {
+            code: "DUPLICATED_EMAIL",
+          },
+        });
+      }
+    }
+
+    throw error;
+  }
 });

@@ -48,6 +48,9 @@ const handleSubmit = async (payload: {
     description="Este es tu primer inicio de sesión. Por favor crea una nueva contraseña antes de continuar."
     submit-label="Continuar"
     :loading="isLoading"
+    password-id="first-login-password-input"
+    confirm-password-id="first-login-confirm-password-input"
+    button-id="first-login-submit-button"
     @submit="handleSubmit"
   />
 </template>

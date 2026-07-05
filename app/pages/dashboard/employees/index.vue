@@ -7,7 +7,6 @@ definePageMeta({
   roles: ["SUPER_ADMIN", "MANAGER"],
 });
 
-
 const employeeToDeactivate = ref<Employee | null>(null);
 const isDeactivateModalOpen = ref(false);
 const isDeactivating = ref(false);
@@ -19,7 +18,7 @@ const UDropdownMenu = resolveComponent("UDropdownMenu");
 const UButton = resolveComponent("UButton");
 
 const toast = useToast();
-const { employees } = await useEmployees();
+const { employees, total, currentPage, perPage, pending } = await useEmployees();
 const { updateEmployeeStatus } = await useEmployeeStatus();
 const title = ref("");
 const subtitle = ref("");
@@ -242,7 +241,16 @@ const deactivateEmployeeData = async () => {
     </div>
 
     <ClientOnly>
-      <SharedTable :data="employees" :columns="productColumns" data-test-id="employees-table"  input-data-test-id="employees-search-input" />
+      <SharedTable
+        :data="employees"
+        :columns="productColumns"
+        :total="total"
+        :page="currentPage"
+        :page-size="perPage"
+        :loading="pending"
+        data-test-id="employees-table"
+        input-data-test-id="employees-search-input"
+      />
       <SharedConfirmationModal
         v-model="isDeactivateModalOpen"
         :title="confirmationModal.title"

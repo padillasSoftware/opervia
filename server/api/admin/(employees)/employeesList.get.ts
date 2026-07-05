@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
       HttpStatus.UNAUTHORIZED,
       HttpStatus.UNAUTHORIZED,
       "UNAUTHORIZED",
-      "Unauthorized"
+      "Unauthorized",
     );
   }
 
@@ -14,16 +14,52 @@ export default defineEventHandler(async (event) => {
 
   let limit = Number(query.limit ?? 10);
   let page = Number(query.page ?? 1);
+  const search = String(query.search ?? "").trim();
 
   limit = Number.isNaN(limit) || limit < 1 ? 10 : limit;
   page = Number.isNaN(page) || page < 1 ? 1 : page;
-
   limit = Math.min(limit, 100);
 
   const skip = (page - 1) * limit;
 
   const where = {
     centerId: user.centerId,
+    ...(search
+      ? {
+          OR: [
+            {
+              fullName: {
+                contains: search,
+                mode: "insensitive" as const,
+              },
+            },
+            {
+              position: {
+                contains: search,
+                mode: "insensitive" as const,
+              },
+            },
+            {
+              user: {
+                email: {
+                  contains: search,
+                  mode: "insensitive" as const,
+                },
+              },
+            },
+            {
+              user: {
+                role: {
+                  name: {
+                    contains: search,
+                    mode: "insensitive" as const,
+                  },
+                },
+              },
+            },
+          ],
+        }
+      : {}),
   };
 
   const [employeesList, total] = await Promise.all([
@@ -56,7 +92,7 @@ export default defineEventHandler(async (event) => {
 
   const employees = employeesList.map((employee) => ({
     id: employee.id,
-    name: `${employee.firstName} ${employee.lastName}`,
+    name: employee.fullName,
     role: employee.user.role.name,
     position: employee.position,
     email: employee.user.email,

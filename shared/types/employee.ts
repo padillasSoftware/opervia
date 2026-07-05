@@ -14,11 +14,11 @@ export interface EmployeeDto {
     firstName: string;
     lastName: string;
     role: string;
-    position: Position;
+    position?: Position;
     email: string;
     status: string;
     salary: number;
     hireDate: string;
     password: string;
-    centerId: string
+    centerId: string;
 }

@@ -30,11 +30,16 @@ runs:
       shell: bash
       run: npm ci
 
+
+    - name: Run migrations
+      shell: bash
+      run: npm run prisma:migrate
+
     - name: Generate Prisma Client
       if: ${{ inputs.generate-prisma == 'true' }}
       shell: bash
       run: npm run prisma:generate
-
+      
     - name: Install Playwright browsers
       if: ${{ inputs.install-playwright == 'true' }}
       shell: bash

@@ -1,8 +1,7 @@
 {
-    "compilerOptions": {
+  "compilerOptions": {
     "types": ["node"]
   },
-  // https://nuxt.com/docs/guide/concepts/typescript
   "files": [],
   "references": [
     {
@@ -16,6 +15,9 @@
     },
     {
       "path": "./.nuxt/tsconfig.node.json"
+    },
+    {
+      "path": "./tests/tsconfig.json"
     }
   ]
 }
