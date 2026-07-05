@@ -4,6 +4,9 @@ defineProps<{
   description?: string;
   submitLabel?: string;
   loading?: boolean;
+  passwordId?: string;
+  confirmPasswordId?: string;
+  buttonId?: string;
 }>();
 
 const emit = defineEmits<{
@@ -127,6 +130,7 @@ const toggleConfirmPassword = () => {
       <form class="space-y-4" @submit.prevent="handleSubmit">
         <UFormField label="Nueva contraseña" :error="errors.password">
           <UInput
+            :id="passwordId"
             v-model="form.password"
             :type="showPassword ? 'text' : 'password'"
             placeholder="Ingresa tu nueva contraseña"
@@ -151,6 +155,7 @@ const toggleConfirmPassword = () => {
           :error="errors.confirmPassword"
         >
           <UInput
+            :id="confirmPasswordId"
             v-model="form.confirmPassword"
             :type="showConfirmPassword ? 'text' : 'password'"
             placeholder="Confirma tu nueva contraseña"
@@ -159,6 +164,7 @@ const toggleConfirmPassword = () => {
           >
             <template #trailing>
               <UButton
+                :id="buttonId"
                 type="button"
                 color="neutral"
                 variant="ghost"

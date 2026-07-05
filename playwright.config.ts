@@ -52,6 +52,6 @@ export default defineConfig({
           : "PLAYWRIGHT=true npm run dev",
         url: "http://localhost:3000",
         reuseExistingServer: !isCI,
-        timeout: 120_000,
+        timeout: 15_000,
       },
 });

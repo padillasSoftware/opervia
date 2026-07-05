@@ -1,7 +1,13 @@
 export const TestUsers = {
-  admin: {
+  firstLoginUser: {
+    email: requiredEnv("MANAGER_EMAIL"),
+    password: requiredEnv("MANAGER_PASSWORD"),
+    lastLoginAt: null,
+  },
+  activeUser: {
     email: requiredEnv("SUPERADMIN_EMAIL"),
     password: requiredEnv("SUPERADMIN_PASSWORD"),
+    lastLoginAt: new Date()
   },
 } as const;
 

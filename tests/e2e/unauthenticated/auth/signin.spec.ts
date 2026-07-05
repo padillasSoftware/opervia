@@ -1,6 +1,8 @@
 import { test } from "@playwright/test";
-// import { TestUsers } from "../../../playwright/config/users";
+import { TestUsers } from "../../../playwright/config/users";
 import { SignInPage } from "../../../playwright/pages/auth/signin.page";
+import { FirstLoginPage } from "../../../playwright/pages/auth/first-login.page";
+import { DashboardPage } from '../../../playwright/pages/dashboard/dashboard.page';
 
 test.describe("@smoke Sign In", () => {
   test("loads sign in page", async ({ page }) => {
@@ -9,60 +11,71 @@ test.describe("@smoke Sign In", () => {
     await signInPage.goto();
   });
 
-  // test("allows administrator to sign in", async ({ page }) => {
-  //   const signInPage = new SignInPage(page);
+  test("redirects first-time users to first login", async ({ page }) => {
+    const signInPage = new SignInPage(page);
+    const firstLoginPage = new FirstLoginPage(page);
 
-  //   await signInPage.goto();
+    await signInPage.goto();
 
-  //   await signInPage.signIn(TestUsers.admin);
+    await signInPage.signIn(TestUsers.firstLoginUser);
+    // await page.pause();
+    await firstLoginPage.expectLoaded();
+  });
 
-  //   await signInPage.expectDashboard();
-  // });
+  test("redirects returning users to dashboard", async ({ page }) => {
+    const signInPage = new SignInPage(page);
+    const dashboardPage = new DashboardPage(page);
 
-  // test("prevents sign in with invalid credentials", async ({ page }) => {
-  //   const signInPage = new SignInPage(page);
+    await signInPage.goto();
+    await signInPage.signIn(TestUsers.activeUser);
 
-  //   await signInPage.goto();
+    await dashboardPage.expectLoaded();
+  });
 
-  //   await signInPage.signIn({
-  //     email: "invalid@maelmar.com",
-  //     password: "WrongPassword123!",
-  //   });
+  test("prevents sign in with invalid credentials", async ({ page }) => {
+    const signInPage = new SignInPage(page);
 
-  //   await signInPage.expectInvalidCredentials();
-  // });
+    await signInPage.goto();
 
-  // test("requires email", async ({ page }) => {
-  //   const signInPage = new SignInPage(page);
+    await signInPage.signIn({
+      email: "invalid@maelmar.com",
+      password: "WrongPassword123!",
+    });
 
-  //   await signInPage.goto();
+    await signInPage.expectInvalidCredentials();
+  });
 
-  //   await signInPage.fillPassword("Password123!");
-  //   await signInPage.submit();
+  test("requires email", async ({ page }) => {
+    const signInPage = new SignInPage(page);
 
-  //   await signInPage.expectValidationError(/correo.*requerido/i);
-  // });
+    await signInPage.goto();
 
-  // test("requires password", async ({ page }) => {
-  //   const signInPage = new SignInPage(page);
+    await signInPage.fillPassword("Password123!");
+    await signInPage.submit();
 
-  //   await signInPage.goto();
+    await signInPage.expectValidationError(/correo.*requerido/i);
+  });
 
-  //   await signInPage.fillEmail(TestUsers.admin.email);
-  //   await signInPage.submit();
+  test("requires password", async ({ page }) => {
+    const signInPage = new SignInPage(page);
 
-  //   await signInPage.expectValidationError(/contraseña.*requerida/i);
-  // });
+    await signInPage.goto();
 
-  // test("requires valid email format", async ({ page }) => {
-  //   const signInPage = new SignInPage(page);
+    await signInPage.fillEmail(TestUsers.activeUser.email);
+    await signInPage.submit();
 
-  //   await signInPage.goto();
+    await signInPage.expectValidationError(/contraseña.*requerida/i);
+  });
 
-  //   await signInPage.fillEmail("invalid-email");
-  //   await signInPage.fillPassword("Password123!");
-  //   await signInPage.submit();
+  test("requires valid email format", async ({ page }) => {
+    const signInPage = new SignInPage(page);
 
-  //   await signInPage.expectValidationError(/correo.*válido|email.*valid/i);
-  // });
+    await signInPage.goto();
+
+    await signInPage.fillEmail("invalid-email");
+    await signInPage.fillPassword("Password123!");
+    await signInPage.submit();
+
+    await signInPage.expectValidationError(/correo.*válido|email.*valid/i);
+  });
 });

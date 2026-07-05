@@ -11,8 +11,8 @@ export class SignInPage extends BasePage {
   /*                                   Locators                                 */
   /* -------------------------------------------------------------------------- */
 
-  readonly emailInput = this.page.locator("#email");
-  readonly passwordInput = this.page.locator("#password");
+  readonly emailInput = this.page.locator("#signin-email-input");
+  readonly passwordInput = this.page.locator("#signin-password-input");
 
   readonly submitButton = this.page.getByRole("button", {
     name: /iniciar sesión|sign in|entrar/i,
@@ -30,6 +30,12 @@ export class SignInPage extends BasePage {
     await this.page.goto("/signin");
     await this.waitForUrl(/\/signin/);
 
+    await this.waitUntilReady();
+  }
+
+  public override async waitUntilReady() {
+    await super.waitUntilReady();
+
     await this.expectLoaded();
   }
 
@@ -46,6 +52,7 @@ export class SignInPage extends BasePage {
   }
 
   public async signIn(credentials: SignInCredentials) {
+    // await this.page.pause();
     await this.fillEmail(credentials.email);
     await this.fillPassword(credentials.password);
     await this.submit();
@@ -68,6 +75,10 @@ export class SignInPage extends BasePage {
 
     await expect(this.submitButton).toBeVisible();
     await expect(this.submitButton).toBeEnabled();
+  }
+
+  public async expectFirstLogin() {
+    await expect(this.page).toHaveURL(/\/first-login/);
   }
 
   public async expectDashboard() {

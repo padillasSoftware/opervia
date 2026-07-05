@@ -35,6 +35,10 @@ export abstract class BasePage {
     });
   }
 
+  public async waitUntilReady() {
+    await this.waitForNetworkIdle();
+  }
+
   /* -------------------------------------------------------------------------- */
   /*                                 Interaction                               */
   /* -------------------------------------------------------------------------- */
@@ -50,11 +54,13 @@ export abstract class BasePage {
   }
 
   public async stableFill(locator: Locator, value: string) {
+    await expect(locator).toBeVisible();
     await expect(locator).toBeEditable();
 
-    await this.stableClick(locator);
+    await locator.click({ delay: 100 });
+    await locator.type(value, { delay: 30 });
 
-    await locator.fill(value);
+    await expect(locator).toHaveValue(value);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -67,9 +73,12 @@ export abstract class BasePage {
 
   public async expectToast(text: string | RegExp) {
     await expect(
-      this.page.getByRole("alert").filter({
-        hasText: text,
-      }).first(),
+      this.page
+        .getByRole("alert")
+        .filter({
+          hasText: text,
+        })
+        .first(),
     ).toBeVisible();
   }
 }
