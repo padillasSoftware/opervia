@@ -121,7 +121,7 @@ watch( () => state.email, (value) => console.log("EMAIL:", value ))
                 size="xs"
                 :icon="showPassword ? 'i-lucide-eye-off' : 'i-lucide-eye'"
                 aria-label="Show password"
-                @click="() => showPassword = !showPassword"
+                @click="() => { showPassword = !showPassword }"
               />
             </template>
           </UInput>
