@@ -1,13 +1,14 @@
-export const errorHandler = (statusCode: number, status: number, code: string, statusMessage: string) => {
+import { createError } from "h3";
 
-    return createError({
-        statusCode: statusCode,
-        status: status,
-        message: statusMessage,
-        statusMessage: statusMessage,
-        data: {
-            code: code
-        },
-        stack: process.env.STAGE !== "prod" ? new Error().stack : ""
-    })
-}
+export const errorHandler = (statusCode: number, status: number, code: string, statusMessage: string) => {
+  return createError({
+    statusCode: statusCode,
+    status: status,
+    message: statusMessage,
+    statusMessage: statusMessage,
+    data: {
+      code: code,
+    },
+    stack: process.env.STAGE !== "prod" ? new Error().stack : "",
+  });
+};

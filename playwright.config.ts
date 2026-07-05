@@ -28,7 +28,10 @@ export default defineConfig({
     // },
     {
       name: "unauthenticated",
-      testMatch: "**/e2e/unauthenticated/**/*.spec.ts",
+      testMatch: [
+        "**/e2e/unauthenticated/**/*.spec.ts",
+        "**/e2e/public/**/*.spec.ts",
+      ],
       use: {
         ...devices["Desktop Chrome"],
         storageState: { cookies: [], origins: [] },
