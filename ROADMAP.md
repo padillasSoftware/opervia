@@ -71,6 +71,8 @@ Hacer el proyecto más mantenible a medida que crezca.
 
 ## Fase 4 — Observabilidad y operaciones (prioridad media)
 
+**Estado: ✅ Completado**
+
 ### Objetivo
 Preparar el proyecto para monitoreo real y diagnóstico de incidentes.
 

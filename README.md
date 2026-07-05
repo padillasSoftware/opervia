@@ -55,9 +55,19 @@ Promotion → master
 - Validaciones con TypeScript y Zod.
 - Base de datos PostgreSQL con Prisma.
 - Pruebas E2E con Playwright.
+- Health endpoint para monitoreo de servicio y base de datos.
+- Logging estructurado en servicios críticos.
 - Smoke tests automáticos en staging.
 - Pipeline CI/CD con GitHub Actions.
 - Deploy en Netlify.
+
+---
+
+## 🧪 Observabilidad y operaciones
+
+- Endpoint de health: `/api/health`.
+- Estado del servicio y la base de datos en una sola respuesta.
+- Logs JSON estructurados en servidor para facilitar diagnóstico.
 
 ---
 
@@ -259,7 +269,19 @@ tests/smoke
 
 ---
 
-## 🚦 CI/CD
+## � Health check
+
+La aplicación expone un endpoint de salud en:
+
+```txt
+/api/health
+```
+
+Retorna el estado del servicio, la disponibilidad de la base de datos, el uptime y el stage actual.
+
+---
+
+## �🚦 CI/CD
 
 ### 01 CI
 
