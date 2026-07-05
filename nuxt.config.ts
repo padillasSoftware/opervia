@@ -10,6 +10,13 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    session: {
+      maxAge: 60 * 60 * 24, // 1 day
+      cookie: {
+        sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
     smtpHost: process.env.SMTP_HOST,
     smtpPort: process.env.SMTP_PORT,
     smtpSecure: process.env.SMTP_SECURE,

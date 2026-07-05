@@ -1,12 +1,13 @@
 export default defineEventHandler(async (event) => {
-  const { user } = await getUserSession(event);
+  const { user } = await requireUserSession(event);
+  const rolesAllowed = ["SUPER_ADMIN", "MANAGER"];
 
-  if (!user) {
+  if (!rolesAllowed.includes(user.role)) {
     throw errorHandler(
-      HttpStatus.UNAUTHORIZED,
-      HttpStatus.UNAUTHORIZED,
-      "UNAUTHORIZED",
-      "Unauthorized",
+      HttpStatus.FORBIDDEN,
+      HttpStatus.FORBIDDEN,
+      "FORBIDDEN",
+      "Forbidden",
     );
   }
 
