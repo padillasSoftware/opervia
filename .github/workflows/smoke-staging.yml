@@ -21,7 +21,7 @@ jobs:
       SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
       MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
       MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
-      QA_CENTER_ID: ${{ secrets.QA_CENTER_ID }}
+      QA_CENTER_ID: ${{ secrets.SMOKE_CENTER_ID }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
