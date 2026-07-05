@@ -13,32 +13,9 @@ test.describe("@smoke Sign In", () => {
     await signInPage.goto();
   });
 
-  test("redirects first-time users to first login", async ({ page, request }) => {
-    const signInPage = new SignInPage(page);
-    const firstLoginPage = new FirstLoginPage(page);
+});
 
-        const user = UserFactory.firstLoginUser();
-    const userApi = new UserApi(request);
-
-    await userApi.createFirstLoginUser(user);
-
-    await signInPage.goto();
-
-    await signInPage.signIn(user);
-    // await page.pause();
-    await firstLoginPage.expectLoaded();
-  });
-
-  test("redirects returning users to dashboard", async ({ page}) => {
-    const signInPage = new SignInPage(page);
-    const dashboardPage = new DashboardPage(page);
-
-    await signInPage.goto();
-    await signInPage.signIn(TestUsers.activeUser);
-
-    await dashboardPage.expectLoaded();
-  });
-
+test.describe("@validation ", () => {
   test("prevents sign in with invalid credentials", async ({ page }) => {
     const signInPage = new SignInPage(page);
 
@@ -84,5 +61,33 @@ test.describe("@smoke Sign In", () => {
     await signInPage.submit();
 
     await signInPage.expectValidationError(/correo.*válido|email.*valid/i);
+  });
+});
+
+test.describe("@ux ", () => {
+  test("redirects first-time users to first login", async ({ page, request }) => {
+    const signInPage = new SignInPage(page);
+    const firstLoginPage = new FirstLoginPage(page);
+
+        const user = UserFactory.firstLoginUser();
+    const userApi = new UserApi(request);
+
+    await userApi.createFirstLoginUser(user);
+
+    await signInPage.goto();
+
+    await signInPage.signIn(user);
+    // await page.pause();
+    await firstLoginPage.expectLoaded();
+  });
+
+  test("redirects returning users to dashboard", async ({ page}) => {
+    const signInPage = new SignInPage(page);
+    const dashboardPage = new DashboardPage(page);
+
+    await signInPage.goto();
+    await signInPage.signIn(TestUsers.activeUser);
+
+    await dashboardPage.expectLoaded();
   });
 });
