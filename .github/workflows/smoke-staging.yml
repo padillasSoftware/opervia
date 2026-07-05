@@ -17,6 +17,11 @@ jobs:
     env:
       BASE_URL: ${{ secrets.STAGING_URL }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SUPERADMIN_EMAIL: ${{ secrets.SUPERADMIN_EMAIL }}
+      SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
+      MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
+      MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
+      QA_CENTER_ID: ${{ secrets.QA_CENTER_ID }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
