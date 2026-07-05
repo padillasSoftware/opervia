@@ -1,28 +1,32 @@
-name: 04 Smoke Staging
+name: 07 Prod PR
 
 on:
-  push:
+  pull_request:
     branches:
-      - staging
+      - master
 
 concurrency:
-  group: smoke-staging
+  group: prod-pr-${{ github.event.pull_request.number || github.ref_name }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  smoke:
-    name: Smoke Staging
+  smoke-preview:
+    name: Smoke Production Preview
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
     env:
-      BASE_URL: ${{ secrets.STAGING_URL }}
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
       SUPERADMIN_EMAIL: ${{ secrets.SUPERADMIN_EMAIL }}
       SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
       MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
       MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
-      QA_CENTER_ID: ${{ secrets.SMOKE_CENTER_ID }}
+      QA_CENTER_ID: ${{ secrets.PROD_SMOKE_CENTER_ID }}
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,13 +36,13 @@ jobs:
         with:
           install-playwright: "true"
 
-      - name: Wait for Netlify deploy for this commit
+      - name: Wait for Netlify production preview deploy
         env:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           NETLIFY_ACCESS_TOKEN: ${{ secrets.NETLIFY_ACCESS_TOKEN }}
-          COMMIT_SHA: ${{ github.sha }}
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          echo "Waiting for Netlify deploy for commit: $COMMIT_SHA"
+          echo "Waiting for Netlify production preview deploy for commit: $COMMIT_SHA"
 
           for i in {1..60}; do
             DEPLOY=$(curl -s \
@@ -47,7 +51,7 @@ jobs:
               | jq -c --arg SHA "$COMMIT_SHA" '[.[] | select(.commit_ref == $SHA)][0]')
 
             if [ "$DEPLOY" = "null" ] || [ -z "$DEPLOY" ]; then
-              echo "Deploy for commit not found yet. Attempt $i/60"
+              echo "Deploy not found yet. Attempt $i/60"
               sleep 10
               continue
             fi
@@ -59,27 +63,40 @@ jobs:
             echo "Deploy URL: $DEPLOY_URL"
 
             if [ "$STATE" = "ready" ]; then
-              echo "Netlify deploy is ready."
+              echo "BASE_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
+              echo "Netlify production preview deploy is ready."
               exit 0
             fi
 
             if [ "$STATE" = "error" ] || [ "$STATE" = "failed" ]; then
-              echo "Netlify deploy failed."
+              echo "Netlify production preview deploy failed."
               exit 1
             fi
 
             sleep 10
           done
 
-          echo "Timed out waiting for Netlify deploy for commit $COMMIT_SHA."
+          echo "Timed out waiting for Netlify production preview deploy."
           exit 1
 
-      - name: Run smoke tests against staging
+      - name: Run smoke tests against production preview
         run: npx playwright test --grep "@smoke"
 
-      - name: Upload smoke report
+      - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: smoke-staging-report
+          name: smoke-prod-preview-report
           path: playwright-report/
+
+  auto-merge:
+    name: Auto Merge to Production
+    runs-on: ubuntu-latest
+    needs: smoke-preview
+
+    steps:
+      - name: Merge PR into master
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge "$PR_URL" --squash --delete-branch

@@ -1,0 +1,86 @@
+name: 08 Smoke Prod
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: smoke-prod
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: Smoke Prod
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    env:
+      DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+      SUPERADMIN_EMAIL: ${{ secrets.SUPERADMIN_EMAIL }}
+      SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
+      MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
+      MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
+      QA_CENTER_ID: ${{ secrets.PROD_SMOKE_CENTER_ID }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup project
+        uses: ./.github/actions/setup-project
+        with:
+          install-playwright: "true"
+
+      - name: Wait for Netlify production deploy
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_ACCESS_TOKEN: ${{ secrets.NETLIFY_ACCESS_TOKEN }}
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          echo "Waiting for Netlify production deploy for commit: $COMMIT_SHA"
+
+          for i in {1..60}; do
+            DEPLOY=$(curl -s \
+              -H "Authorization: Bearer $NETLIFY_ACCESS_TOKEN" \
+              "https://api.netlify.com/api/v1/sites/$NETLIFY_SITE_ID/deploys?per_page=50" \
+              | jq -c --arg SHA "$COMMIT_SHA" '[.[] | select(.commit_ref == $SHA)][0]')
+
+            if [ "$DEPLOY" = "null" ] || [ -z "$DEPLOY" ]; then
+              echo "Deploy not found yet. Attempt $i/60"
+              sleep 10
+              continue
+            fi
+
+            STATE=$(echo "$DEPLOY" | jq -r '.state')
+            DEPLOY_URL=$(echo "$DEPLOY" | jq -r '.ssl_url // .url')
+
+            echo "Deploy state: $STATE"
+            echo "Deploy URL: $DEPLOY_URL"
+
+            if [ "$STATE" = "ready" ]; then
+              echo "BASE_URL=$DEPLOY_URL" >> "$GITHUB_ENV"
+              echo "Netlify production deploy is ready."
+              exit 0
+            fi
+
+            if [ "$STATE" = "error" ] || [ "$STATE" = "failed" ]; then
+              echo "Netlify production deploy failed."
+              exit 1
+            fi
+
+            sleep 10
+          done
+
+          echo "Timed out waiting for Netlify production deploy."
+          exit 1
+
+      - name: Run smoke tests against production
+        run: npx playwright test --grep "@smoke"
+
+      - name: Upload smoke report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-prod-report
+          path: playwright-report/

@@ -1,4 +1,4 @@
-name: Auto PR to staging
+name: 01 Auto PR to staging
 
 on:
   push:
