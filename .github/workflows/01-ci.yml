@@ -4,6 +4,13 @@ on:
   pull_request:
     branches:
       - staging
+  push:
+    branches:
+      - staging
+
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number || github.ref_name }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -12,6 +19,7 @@ jobs:
   ci:
     name: Lint Typecheck Build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -23,6 +31,8 @@ jobs:
 
       - name: Setup project
         uses: ./.github/actions/setup-project
+        with:
+          run-migrations: "false"
 
       - name: Run lint
         run: npm run lint
