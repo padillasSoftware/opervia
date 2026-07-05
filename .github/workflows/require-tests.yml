@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - staging
-  push:
-    branches:
-      - staging
 
 concurrency:
   group: require-tests-${{ github.event.pull_request.number || github.ref_name }}
