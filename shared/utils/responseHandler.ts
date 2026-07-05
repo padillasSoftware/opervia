@@ -1,7 +1,9 @@
+import { HttpStatus } from "./httpstatus";
+
 export const responseHandler = <T>(
   code: string,
   statusMessage: string,
-  data: T
+  data: T,
 ) => {
   return {
     statusCode: HttpStatus.OK,
