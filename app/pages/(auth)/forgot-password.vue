@@ -84,6 +84,7 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
       >
         <UFormField label="Correo electrónico" name="email">
           <UInput
+            id="forgot-password-email-input"
             v-model="state.email"
             type="text"
             icon="i-lucide-mail"
@@ -93,6 +94,7 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
         </UFormField>
 
         <UButton
+          id="forgot-password-submit-button"
           type="submit"
           block
           :loading="isLoading"
@@ -105,6 +107,7 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
 
       <div class="text-center">
         <NuxtLink
+          id="forgot-password-signin-link"
           to="/signin"
           class="text-sm text-primary hover:underline"
         >
