@@ -33,6 +33,7 @@ jobs:
           SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
           MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
           MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
+          QA_CENTER_ID: ${{ secrets.QA_CENTER_ID }}
         run: npx playwright test
 
       - name: Upload Playwright report
