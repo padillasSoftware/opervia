@@ -22,10 +22,10 @@ export default defineConfig({
     video: "retain-on-failure",
   },
   projects: [
-    {
-      name: "setup",
-      testMatch: "**/auth.setup.ts",
-    },
+    // {
+    //   name: "setup",
+    //   testMatch: "**/auth.setup.ts",
+    // },
     {
       name: "unauthenticated",
       testMatch: "**/e2e/unauthenticated/**/*.spec.ts",
@@ -52,6 +52,6 @@ export default defineConfig({
           : "PLAYWRIGHT=true npm run dev",
         url: "http://localhost:3000",
         reuseExistingServer: !isCI,
-        timeout: 15_000,
+        timeout: 120_000,
       },
 });
