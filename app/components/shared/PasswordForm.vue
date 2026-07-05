@@ -163,8 +163,7 @@ const toggleConfirmPassword = () => {
             class="w-full"
           >
             <template #trailing>
-              <UButton
-                :id="buttonId"
+              <UButton                
                 type="button"
                 color="neutral"
                 variant="ghost"
@@ -200,7 +199,7 @@ const toggleConfirmPassword = () => {
           </ul>
         </div>
 
-        <UButton type="submit" block :loading="loading" :disabled="loading">
+        <UButton :id="buttonId" type="submit" block :loading="loading" :disabled="loading">
           {{ submitLabel ?? "Continuar" }}
         </UButton>
       </form>

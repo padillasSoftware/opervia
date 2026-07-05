@@ -16,9 +16,12 @@ jobs:
 
     env:
       BASE_URL: ${{ secrets.STAGING_URL }}
-      STAGING_SUPERADMIN_EMAIL: ${{ secrets.STAGING_SUPERADMIN_EMAIL }}
-      STAGING_SUPERADMIN_PASSWORD: ${{ secrets.STAGING_SUPERADMIN_PASSWORD }}
-
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      SUPERADMIN_EMAIL: ${{ secrets.SUPERADMIN_EMAIL }}
+      SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
+      MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
+      MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
+      QA_CENTER_ID: ${{ secrets.SMOKE_CENTER_ID }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -71,7 +74,7 @@ jobs:
           exit 1
 
       - name: Run smoke tests against staging
-        run: npx playwright test tests/smoke --project=authenticated
+        run: npx playwright test tests/smoke/smoke.spec.ts
 
       - name: Upload smoke report
         if: always()

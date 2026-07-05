@@ -39,7 +39,7 @@ export default defineConfig({
       testMatch: ["**/e2e/authenticated/**/*.spec.ts", "**/smoke/**/*.spec.ts"],
       use: {
         ...devices["Desktop Chrome"],
-        storageState: "playwright/.auth/superadmin.json",
+        // storageState: "playwright/.auth/superadmin.json",
       },
       // dependencies: ["setup"],
     },

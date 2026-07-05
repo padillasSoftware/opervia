@@ -2,7 +2,9 @@ import { test } from "@playwright/test";
 import { TestUsers } from "../../../playwright/config/users";
 import { SignInPage } from "../../../playwright/pages/auth/signin.page";
 import { FirstLoginPage } from "../../../playwright/pages/auth/first-login.page";
-import { DashboardPage } from '../../../playwright/pages/dashboard/dashboard.page';
+import { DashboardPage } from "../../../playwright/pages/dashboard/dashboard.page";
+import { UserApi } from "../../../playwright/api/user.api";
+import { UserFactory } from "../../../playwright/factories/user.factory";
 
 test.describe("@smoke Sign In", () => {
   test("loads sign in page", async ({ page }) => {
@@ -11,18 +13,23 @@ test.describe("@smoke Sign In", () => {
     await signInPage.goto();
   });
 
-  test("redirects first-time users to first login", async ({ page }) => {
+  test("redirects first-time users to first login", async ({ page, request }) => {
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
 
+        const user = UserFactory.firstLoginUser();
+    const userApi = new UserApi(request);
+
+    await userApi.createFirstLoginUser(user);
+
     await signInPage.goto();
 
-    await signInPage.signIn(TestUsers.firstLoginUser);
+    await signInPage.signIn(user);
     // await page.pause();
     await firstLoginPage.expectLoaded();
   });
 
-  test("redirects returning users to dashboard", async ({ page }) => {
+  test("redirects returning users to dashboard", async ({ page}) => {
     const signInPage = new SignInPage(page);
     const dashboardPage = new DashboardPage(page);
 
