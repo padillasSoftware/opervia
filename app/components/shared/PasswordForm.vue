@@ -7,6 +7,8 @@ defineProps<{
   passwordId?: string;
   confirmPasswordId?: string;
   buttonId?: string;
+  passwordToggleButtonId?: string;
+  confirmPasswordToggleButtonId?: string;
 }>();
 
 const emit = defineEmits<{
@@ -81,22 +83,27 @@ watch(form, () => {
 
 const passwordRequirements = computed(() => [
   {
+    id: "min-length",
     label: "Al menos 8 caracteres",
     valid: form.password.length >= 8,
   },
   {
+    id: "uppercase",
     label: "Una letra mayúscula",
     valid: /[A-Z]/.test(form.password),
   },
   {
+    id: "lowercase",
     label: "Una letra minúscula",
     valid: /[a-z]/.test(form.password),
   },
   {
+    id: "number",
     label: "Un número",
     valid: /\d/.test(form.password),
   },
   {
+    id: "special",
     label: "Un carácter especial",
     valid: /[^A-Za-z0-9]/.test(form.password),
   },
@@ -139,6 +146,7 @@ const toggleConfirmPassword = () => {
           >
             <template #trailing>
               <UButton
+                :id="passwordToggleButtonId"
                 type="button"
                 color="neutral"
                 variant="ghost"
@@ -163,7 +171,8 @@ const toggleConfirmPassword = () => {
             class="w-full"
           >
             <template #trailing>
-              <UButton                
+              <UButton
+                :id="confirmPasswordToggleButtonId"
                 type="button"
                 color="neutral"
                 variant="ghost"
@@ -183,7 +192,9 @@ const toggleConfirmPassword = () => {
           <ul class="space-y-2">
             <li
               v-for="rule in passwordRequirements"
-              :key="rule.label"
+              :key="rule.id"
+              :data-testid="`password-requirement-${rule.id}`"
+              :data-valid="rule.valid"
               class="flex items-center gap-2 transition-all"
               :class="rule.valid ? 'text-success' : 'text-muted'"
             >
@@ -199,7 +210,13 @@ const toggleConfirmPassword = () => {
           </ul>
         </div>
 
-        <UButton :id="buttonId" type="submit" block :loading="loading" :disabled="loading">
+        <UButton
+          :id="buttonId"
+          type="submit"
+          block
+          :loading="loading"
+          :disabled="loading"
+        >
           {{ submitLabel ?? "Continuar" }}
         </UButton>
       </form>

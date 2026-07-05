@@ -1,4 +1,4 @@
-import { expect } from "@playwright/test";
+import { expect, type Locator } from "@playwright/test";
 import { BasePage } from "../base.page";
 
 type FirstLoginPassword = {
@@ -18,6 +18,21 @@ export class FirstLoginPage extends BasePage {
   );
 
   readonly submitButton = this.page.locator("#first-login-submit-button");
+  readonly passwordToggleButton = this.page.locator(
+    "#first-login-toggle-password-button",
+  );
+
+  readonly minLengthRequirement = this.page.getByTestId(
+    "password-requirement-min-length",
+  );
+
+  readonly uppercaseRequirement = this.page.getByTestId(
+    "password-requirement-uppercase",
+  );
+
+  readonly numberRequirement = this.page.getByTestId(
+    "password-requirement-number",
+  );
 
   readonly heading = this.page.getByRole("heading", {
     name: /Establece tu nueva contraseña/i,
@@ -26,7 +41,6 @@ export class FirstLoginPage extends BasePage {
   /* -------------------------------------------------------------------------- */
   /*                                  Navigation                                */
   /* -------------------------------------------------------------------------- */
-
 
   /* -------------------------------------------------------------------------- */
   /*                                   Actions                                  */
@@ -48,6 +62,13 @@ export class FirstLoginPage extends BasePage {
     await this.fillPassword(payload.password);
     await this.fillConfirmPassword(payload.confirmPassword);
     await this.submit();
+  }
+  public async submitWithEnter() {
+    await this.confirmPasswordInput.press("Enter");
+  }
+
+  public async togglePasswordVisibility() {
+    await this.stableClick(this.passwordToggleButton);
   }
 
   /* -------------------------------------------------------------------------- */
@@ -79,5 +100,21 @@ export class FirstLoginPage extends BasePage {
 
   public async expectSuccess() {
     await this.expectToast(/contraseña actualizada|actualizada correctamente/i);
+  }
+
+  public async expectPasswordVisible() {
+    await expect(this.passwordInput).toHaveAttribute("type", "text");
+  }
+
+  
+  public async expectPasswordHidden() {
+    await expect(this.passwordInput).toHaveAttribute("type", "password");
+  }
+  public async expectRequirementInvalid(requirement: Locator) {
+    await expect(requirement).toHaveAttribute("data-valid", "false");
+  }
+
+  public async expectRequirementValid(requirement: Locator) {
+    await expect(requirement).toHaveAttribute("data-valid", "true");
   }
 }
