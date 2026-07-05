@@ -2,29 +2,20 @@ name: Auto PR to staging
 
 on:
   push:
-    branches-ignore:
-      - main
-      - master
-      - staging
+    branches:
+      - "feature/**"
 
 permissions:
   contents: read
   pull-requests: write
 
 jobs:
-  auto-pr:
+  auto-pr-to-staging:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Validate branch name
-        run: |
-          BRANCH="${GITHUB_REF_NAME}"
-
-          if [[ ! "$BRANCH" =~ ^feature/[a-zA-Z0-9._-]+$ ]]; then
-            echo "❌ Nombre de rama inválido: $BRANCH"
-            echo "Usa este formato: feature/nombre"
-            exit 1
-          fi
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Check if PR already exists
         id: check-pr
@@ -47,6 +38,6 @@ jobs:
             --base staging \
             --head "${GITHUB_REF_NAME}" \
             --title "${GITHUB_REF_NAME} → staging" \
-            --body "PR generado automáticamente desde \`${GITHUB_REF_NAME}\` hacia \`staging\`."
+            --body "PR generado automáticamente hacia staging."
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
