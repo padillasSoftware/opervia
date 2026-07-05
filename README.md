@@ -128,25 +128,44 @@ Promotion → master
 
 ## ⚙️ Instalación
 
+### Requisitos previos
+
+- Node.js 20+ instalado.
+- PostgreSQL accesible localmente o en un contenedor.
+- Un archivo `.env` basado en `.env.example`.
+
+### Primer setup
+
 ```bash
 git clone https://github.com/padillasSoftware/opervia.git
 cd opervia
 npm install
+cp .env.example .env
 ```
 
-Generar Prisma Client:
+### Configurar variables de entorno
+
+Edita `.env` con tu URL de base de datos y las credenciales de sesión/SMTP.
+
+### Generar Prisma Client
 
 ```bash
 npm run prisma:generate
 ```
 
-Ejecutar seed:
+### Aplicar migraciones locales
+
+```bash
+npm run prisma:migrate
+```
+
+### Ejecutar seed de datos iniciales
 
 ```bash
 npm run seed
 ```
 
-Levantar en local:
+### Levantar la aplicación en local
 
 ```bash
 npm run dev
@@ -156,23 +175,31 @@ npm run dev
 
 ## 🔐 Variables de entorno
 
-Crea un archivo `.env` basado en tus variables del ambiente:
+Copia `.env.example` a `.env` y completa los valores:
 
 ```env
-DATABASE_URL=
-NUXT_SESSION_PASSWORD=
+DATABASE_URL="postgresql://user:password@localhost:5432/opervia"
+NUXT_SESSION_PASSWORD="una-clave-secreta-de-32-o-mas-caracteres"
 
-SMTP_HOST=
-SMTP_PORT=
-SMTP_SECURE=
-SMTP_USER=
-SMTP_PASS=
-SMTP_FROM_EMAIL=
-SMTP_FROM_NAME=
+SMTP_HOST="smtp.example.com"
+SMTP_PORT="587"
+SMTP_SECURE="false"
+SMTP_USER="usuario-smtp"
+SMTP_PASS="password-smtp"
+SMTP_FROM_EMAIL="no-reply@midominio.com"
+SMTP_FROM_NAME="Opervia"
 
-APP_URL=
-STAGE=
+APP_URL="http://localhost:3000"
+STAGE="local"
 ```
+
+### Descripción de variables
+
+- `DATABASE_URL`: conexión PostgreSQL.
+- `NUXT_SESSION_PASSWORD`: clave para cifrar sesiones.
+- `SMTP_*`: credenciales de correo para envíos de restablecimiento y notificaciones.
+- `APP_URL`: URL pública de la app (local o staging).
+- `STAGE`: ambiente actual (`local`, `staging`, `production`).
 
 ---
 
@@ -331,6 +358,7 @@ master
 | `npm run clean` | Limpia dependencias/builds locales |
 | `npm run sync` | Actualiza `master` y `staging` |
 | `npm run release` | Validación previa a release |
+| `npm run test:unit` | Ejecuta pruebas unitarias con tsx |
 
 ---
 
@@ -419,7 +447,60 @@ dist
 
 ---
 
-## 🧭 Roadmap
+## � Contribuyendo
+
+### Flujo de trabajo recomendado
+
+- Crear una rama nueva desde `staging`:
+  ```bash
+git checkout staging
+git pull
+git checkout -b feature/mi-nueva-funcionalidad
+```
+- Hacer cambios en la rama y validar localmente.
+- Subir la rama y abrir PR hacia `staging`.
+
+### Qué validar antes de un PR
+
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test:unit`
+- `npm run test:e2e`
+
+### Qué hace el pipeline
+
+- `01 CI`: instala dependencias, genera Prisma Client, lint, typecheck y build.
+- `02 Require Tests`: exige que cambios de aplicación incluyan pruebas.
+- `03 QA PR`: ejecuta Playwright sobre el PR.
+- `04 Smoke Staging`: valida el entorno staging tras deploy.
+- `05 Promote Production`: promueve cambios exitosos a `master`.
+
+### Guía de migraciones
+
+- Crear una nueva migración:
+  ```bash
+  npx prisma migrate dev --name nombre_de_cambio
+  ```
+- Aplicar migraciones en local:
+  ```bash
+  npm run prisma:migrate
+  ```
+- Generar cliente después de cambios en Prisma:
+  ```bash
+  npm run prisma:generate
+  ```
+
+### Despliegue
+
+El deploy usa Netlify. El comando recomendado de build es:
+
+```bash
+npm run prisma:generate && npm run build
+```
+
+---
+
+## �🧭 Roadmap
 
 ### Core
 
