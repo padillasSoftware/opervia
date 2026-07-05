@@ -1,18 +1,18 @@
 import bcrypt from "bcryptjs";
+import z from "zod";
 import { Prisma } from "../../../prisma/generated/client";
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event);
+  const session = await requireUserSession(event);
 
-  if (!session.user) {
-    throw errorHandler(
-      HttpStatus.UNAUTHORIZED,
-      HttpStatus.UNAUTHORIZED,
-      "UNAUTHORIZED",
-      "Unauthorized",
-    );
-  }
-  const { password } = await readBody(event);
+  const { password } = await readValidatedBody(
+    event,
+    z
+      .object({
+        password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
+      })
+      .parse,
+  );
 
   const user = await prisma.user.findUnique({
     where: {

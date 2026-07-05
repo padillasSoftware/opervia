@@ -14,8 +14,18 @@ const employeeBodySchema = z.object({
 
 export default defineEventHandler(async (event) => {
   try {
-    const id = getRouterParam(event, "id") as string;
+    const { user: loggedUser } = await requireUserSession(event);
+    const rolesAllowed = ["SUPER_ADMIN", "MANAGER"];
+    if (!rolesAllowed.includes(loggedUser.role)) {
+      throw errorHandler(
+        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN,
+        "FORBIDDEN",
+        "Forbidden",
+      );
+    }
 
+    const id = getRouterParam(event, "id") as string;
     const body = await readValidatedBody(event, employeeBodySchema.parse);
 
     const {
@@ -30,6 +40,7 @@ export default defineEventHandler(async (event) => {
 
     const employee = await prisma.employee.findUnique({
       where: { id },
+      include: { user: true },
     });
 
     if (!employee) {
@@ -38,6 +49,24 @@ export default defineEventHandler(async (event) => {
         statusMessage: "EMPLOYEE_NOT_FOUND",
         message: "Employee not found",
       });
+    }
+
+    if (loggedUser.role !== "SUPER_ADMIN" && employee.centerId !== loggedUser.centerId) {
+      throw errorHandler(
+        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN,
+        "FORBIDDEN",
+        "Forbidden",
+      );
+    }
+
+    if (loggedUser.role === "MANAGER" && role === "SUPER_ADMIN") {
+      throw errorHandler(
+        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN,
+        "FORBIDDEN",
+        "Forbidden",
+      );
     }
 
     const roleDB = await prisma.role.findUniqueOrThrow({

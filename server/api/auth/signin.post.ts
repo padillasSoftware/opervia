@@ -9,8 +9,10 @@ const bodySchema = z.object({
     .refine((val) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val), {
       message: "Email is not valid",
     }),
-  password: z.string(),
+  password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
+
+const DUMMY_PASSWORD_HASH = "$2a$10$CwTycUXWue0Thq9StjUM0uJ8dPZ5uNO8PsYqzAbGOqV4C8qoJmPU6";
 
 export default defineEventHandler(async (event) => {
   const { email, password } = await readValidatedBody(event, bodySchema.parse);
@@ -26,20 +28,12 @@ export default defineEventHandler(async (event) => {
     },
   });
 
-  if (!user) {
-    throw errorHandler(
-      HttpStatus.UNAUTHORIZED,
-      HttpStatus.UNAUTHORIZED,
-      "INVALID_CREDENTIALS",
-      "Unauthorized",
-    );
-  }
+  const isPasswordValid = bcrypt.compareSync(
+    password,
+    user?.passwordHash ?? DUMMY_PASSWORD_HASH,
+  );
 
-  const isPasswordValid = bcrypt.compareSync(password, user.passwordHash);
-
-
-
-  if (!isPasswordValid) {
+  if (!user || !isPasswordValid) {
     throw errorHandler(
       HttpStatus.UNAUTHORIZED,
       HttpStatus.UNAUTHORIZED,
@@ -69,9 +63,15 @@ export default defineEventHandler(async (event) => {
     lastLoginAt: user.lastLoginAt ?? null,
   };
 
-    await setUserSession(event, {
+  await setUserSession(
+    event,
+    {
       user: userSession,
-    });
+    },
+    {
+      maxAge: 60 * 60 * 24,
+    },
+  );
   
 
   return {

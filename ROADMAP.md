@@ -10,6 +10,8 @@ Convertir Opervia en una base más robusta, mantenible y segura para crecer como
 
 ## Fase 1 — Estabilizar CI/CD (prioridad alta)
 
+**Estado: ✅ Completado**
+
 ### Objetivo
 Hacer que los workflows de GitHub Actions sean confiables y no fallen por problemas transitorios de base de datos o despliegue.
 
@@ -27,6 +29,8 @@ Hacer que los workflows de GitHub Actions sean confiables y no fallen por proble
 ---
 
 ## Fase 2 — Fortalecer seguridad (prioridad alta)
+
+**Estado: ✅ Completado**
 
 ### Objetivo
 Reducir riesgos de acceso, autenticación y exposición de datos.

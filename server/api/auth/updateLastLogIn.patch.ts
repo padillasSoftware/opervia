@@ -1,16 +1,7 @@
 import { Prisma } from "../../../prisma/generated/client";
 
 export default defineEventHandler(async (event) => {
-  const session = await getUserSession(event);
-
-  if (!session.user) {
-    throw errorHandler(
-      HttpStatus.UNAUTHORIZED,
-      HttpStatus.UNAUTHORIZED,
-      "UNAUTHORIZED",
-      "Unauthorized",
-    );
-  }
+  const session = await requireUserSession(event);
 
   const user = await prisma.user.findUnique({
     where: {
@@ -52,9 +43,15 @@ export default defineEventHandler(async (event) => {
       lastLoginAt: updatedUser.lastLoginAt ?? null,
     };
 
-    await setUserSession(event, {
-      user: userSession,
-    });
+    await setUserSession(
+      event,
+      {
+        user: userSession,
+      },
+      {
+        maxAge: 60 * 60 * 24,
+      },
+    );
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
