@@ -50,6 +50,5 @@ test.describe("@smoke Manager access control", () => {
     });
 
     expect(response.status).toBe(403);
-    console.log(response.text);
   });
 });
