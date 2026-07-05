@@ -115,7 +115,7 @@ test.describe("@validation First Login", () => {
     );
   });
 
-  test.only("validates weak password", async ({ page, request }) => {
+  test("validates weak password", async ({ page, request }) => {
     const user = UserFactory.firstLoginUser();
     const userApi = new UserApi(request);
 

@@ -75,7 +75,7 @@ jobs:
           exit 1
 
       - name: Run smoke tests against staging
-        run: npx playwright test tests/smoke/smoke.spec.ts
+        run: npx playwright test --grep "@smoke"
 
       - name: Upload smoke report
         if: always()
