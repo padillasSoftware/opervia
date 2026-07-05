@@ -1,52 +1,83 @@
 <script setup lang="ts" generic="T">
-import { getPaginationRowModel } from "@tanstack/vue-table";
 import type { TableColumn } from "@nuxt/ui";
 
-const table = useTemplateRef("table");
-
-defineProps<{
+const props = defineProps<{
   data: T[];
   columns: TableColumn<T>[];
+  total: number;
+  page: number;
+  pageSize: number;
+  search?: string;
   dataTestId?: string;
   inputDataTestId?: string;
+  loading: boolean; 
 }>();
 
-const pagination = ref({
-  pageIndex: 0,
-  pageSize: 5,
-});
+const route = useRoute();
+const router = useRouter();
 
-const globalFilter = ref("");
+const globalFilter = ref(props.search ?? "");
+
+watch(
+  () => props.search,
+  (value) => {
+    globalFilter.value = value ?? "";
+  },
+);
+
+const updateQuery = (query: Record<string, string | number | undefined>) => {
+  router.push({
+    query: {
+      ...route.query,
+      ...query,
+    },
+  });
+};
+
+const updatePage = (page: number) => {
+  updateQuery({
+    page,
+    limit: props.pageSize,
+  });
+};
+
+watch(globalFilter, (value) => {
+  updateQuery({
+    page: 1,
+    limit: props.pageSize,
+    search: value.trim() || undefined,
+  });
+});
 </script>
 
 <template>
   <div class="w-full space-y-4 pb-4">
     <div class="flex px-4 py-3.5 border-b border-accented">
-      <UInput v-model="globalFilter" class="max-w-sm" placeholder="Buscar..." :data-testid="inputDataTestId"/>
+      <UInput
+        v-model="globalFilter"
+        class="max-w-sm"
+        placeholder="Buscar..."
+        :data-testid="inputDataTestId"
+      />
     </div>
 
     <UTable
-      ref="table"
-      v-model:pagination="pagination"
-      v-model:global-filter="globalFilter"
       :data="data"
       :columns="columns"
       :data-testid="dataTestId"
-      :pagination-options="{
-        getPaginationRowModel: getPaginationRowModel(),
-      }"
+      :loading="loading"
       class="flex-1"
     />
 
     <div class="flex justify-end border-t border-default pt-4 px-4">
       <UPagination
-        :page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-        :items-per-page="table?.tableApi?.getState().pagination.pageSize"
-        :total="table?.tableApi?.getFilteredRowModel().rows.length"
+        :page="page"
+        :items-per-page="pageSize"
+        :total="total"
         show-edges
         active-color="primary"
         active-variant="outline"
-        @update:page="(p) => table?.tableApi?.setPageIndex(p - 1)"
+        @update:page="updatePage"
       />
     </div>
   </div>

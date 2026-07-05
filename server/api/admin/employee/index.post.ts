@@ -69,10 +69,12 @@ export default defineEventHandler(async (event) => {
           centerId,
           salary,
           hireDate,
+          fullName: `${firstName} ${lastName}`,
           userId: user.id,
         },
       });
     });
+
 
     await emailService.sendWelcomeEmail({
       to: email,

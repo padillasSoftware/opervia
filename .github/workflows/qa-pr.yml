@@ -29,12 +29,10 @@ jobs:
 
       - name: Run Playwright tests
         env:
-          QA_SUPERADMIN_EMAIL: ${{ secrets.QA_SUPERADMIN_EMAIL }}
-          QA_SUPERADMIN_PASSWORD: ${{ secrets.QA_SUPERADMIN_PASSWORD }}
-          QA_MANAGER_EMAIL: ${{ secrets.QA_MANAGER_EMAIL }}
-          QA_MANAGER_PASSWORD: ${{ secrets.QA_MANAGER_PASSWORD }}
-          QA_EMPLOYEE_EMAIL: ${{ secrets.QA_EMPLOYEE_EMAIL }}
-          QA_EMPLOYEE_PASSWORD: ${{ secrets.QA_EMPLOYEE_PASSWORD }}
+          SUPERADMIN_EMAIL: ${{ secrets.SUPERADMIN_EMAIL }}
+          SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
+          MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
+          MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
         run: npx playwright test
 
       - name: Upload Playwright report

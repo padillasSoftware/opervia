@@ -5,34 +5,17 @@ export const useEmployee = async (id: string) => {
     `/api/admin/employee/${id}`,
   );
 
-  const createOrUpdate = async (data: Partial<Employee>) => {
-    const isCreating = data.id === "";
-
+  const updateEmployee = async (employee: Partial<Employee>) => {
     try {
-      if (isCreating) {
-        const { data: responseData, statusCode } = await $fetch<
-          ApiResponse<{ id: string }>
-        >("/api/admin/employee/", {
-          method: "POST",
-          body: data,
-        });
-
-        return {
-          statusCode,
-          data: responseData,
-          error: "",
-        };
-      }
-      const formData = new FormData();
-
-      formData.append("data", JSON.stringify(data));
-      const { data: updatedId, statusCode } = await $fetch(
+      const { data: updatedId, statusCode } = await $fetch<ApiResponse<string>>(
         `/api/admin/employee/${id}`,
         {
           method: "PATCH",
-          body: formData,
+          body: employee,
         },
       );
+
+      // await refresh();
 
       return {
         statusCode,
@@ -53,12 +36,14 @@ export const useEmployee = async (id: string) => {
 
   const deactivateEmployee = async () => {
     try {
-      const { data: updatedId, statusCode } = await $fetch(
+      const { data: updatedId, statusCode } = await $fetch<ApiResponse<string>>(
         `/api/admin/employee/${id}`,
         {
           method: "DELETE",
         },
       );
+
+      await refresh();
 
       return {
         statusCode,
@@ -79,7 +64,7 @@ export const useEmployee = async (id: string) => {
 
   return {
     data,
-    createOrUpdate,
+    updateEmployee,
     deactivateEmployee,
     error,
     status,

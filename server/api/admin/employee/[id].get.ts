@@ -4,13 +4,13 @@ export default defineEventHandler(async (event) => {
   if (id === "new") {
     return {
       id: "",
-      firstName: "Missael",
-      lastName: "Padilla",
+      firstName: "",
+      lastName: "",
       salary: 0,
-      role: "SUPER_ADMIN",
-      position: "CENTER_MANAGER",
-      email: "test@test.com",
-      password: "Abc123456",
+      role: "",
+      position: "",
+      email: "",
+      password: "",
       status: "",
       hireDate: formatDate(new Date()),
     };
