@@ -8,10 +8,10 @@ import { DashboardPage } from "../../../playwright/pages/dashboard/dashboard.pag
 
 test.describe("@smoke First Login", () => {
   test("loads first login page", async ({ page, request }) => {
-    const user = UserFactory.firstLoginUser();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
@@ -23,11 +23,11 @@ test.describe("@smoke First Login", () => {
   });
 
   test("updates password successfully", async ({ page, request }) => {
-    const user = UserFactory.firstLoginUser();
+    const user = UserFactory.user();
     const newPassword = UserFactory.validPassword();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
@@ -50,10 +50,10 @@ test.describe("@smoke First Login", () => {
 
 test.describe("@validation First Login", () => {
   test("requires password", async ({ page, request }) => {
-    const user = UserFactory.firstLoginUser();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
@@ -70,10 +70,10 @@ test.describe("@validation First Login", () => {
   });
 
   test("requires confirm password", async ({ page, request }) => {
-    const user = UserFactory.firstLoginUser();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
@@ -92,10 +92,10 @@ test.describe("@validation First Login", () => {
   });
 
   test("prevents password mismatch", async ({ page, request }) => {
-    const user = UserFactory.firstLoginUser();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
@@ -116,10 +116,10 @@ test.describe("@validation First Login", () => {
   });
 
   test("validates weak password", async ({ page, request }) => {
-    const user = UserFactory.firstLoginUser();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
@@ -146,11 +146,11 @@ test.describe("@validation First Login", () => {
 
 test.describe("@ux First Login", () => {
   test("submits with Enter", async ({ page, request }) => {
-    const user = UserFactory.firstLoginUser();
+    const user = UserFactory.user();
     const newPassword = UserFactory.validPassword();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
@@ -170,10 +170,10 @@ test.describe("@ux First Login", () => {
   });
 
   test("toggles password visibility", async ({ page, request }) => {
-    const user = UserFactory.firstLoginUser();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);

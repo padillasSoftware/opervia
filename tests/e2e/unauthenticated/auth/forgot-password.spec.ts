@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
 import { TestUsers } from "../../../playwright/config/users";
-import { ForgotPasswordPage } from "../../../playwright/pages/auth/reset-password.page";
+import { ForgotPasswordPage } from "../../../playwright/pages/auth/forgot-password.page";
 import { SignInPage } from "../../../playwright/pages/auth/signin.page";
 
 

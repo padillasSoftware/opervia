@@ -1,68 +1,101 @@
 import { expect } from "@playwright/test";
 import { BasePage } from "../base.page";
 
-export class ForgotPasswordPage extends BasePage {
+type ResetPasswordPayload = {
+  password: string;
+  confirmPassword: string;
+};
+
+export class ResetPasswordPage extends BasePage {
   /* -------------------------------------------------------------------------- */
   /*                                   Locators                                 */
   /* -------------------------------------------------------------------------- */
   readonly heading = this.page.getByRole("heading", {
-    name: /recuperar contraseña|olvidaste tu contraseña/i,
+    name: /restablecer contraseña/i,
   });
 
-  readonly emailInput = this.page.locator("#forgot-password-email-input");
-  readonly submitButton = this.page.locator("#forgot-password-submit-button");
-  readonly signInLink = this.page.locator("#forgot-password-signin-link");
+  readonly passwordInput = this.page.locator("#reset-password-password-input");
+
+  readonly confirmPasswordInput = this.page.locator(
+    "#reset-password-confirm-password-input",
+  );
+
+  readonly submitButton = this.page.locator("#reset-password-submit-button");
+
+  readonly passwordToggleButton = this.page.locator(
+    "#reset-password-toggle-password-button",
+  );
 
   /* -------------------------------------------------------------------------- */
   /*                                  Navigation                                */
   /* -------------------------------------------------------------------------- */
-  public async goto() {
-    await this.page.goto("/forgot-password");
-    await this.waitUntilReady();
+
+  public async goto(url: string) {
+    await this.page.goto(url);
     await this.expectLoaded();
   }
 
-  public override async waitUntilReady() {
-    await this.waitForUrl(/\/forgot-password/);
+  public async waitUntilReady() {
+    await this.waitForUrl(/\/reset-password\?token=/);
     await super.waitUntilReady();
-  }
-
-  public async goToSignIn() {
-    await this.stableClick(this.signInLink);
   }
   /* -------------------------------------------------------------------------- */
   /*                                   Actions                                  */
   /* -------------------------------------------------------------------------- */
+  public async fillPassword(password: string) {
+    await this.stableFill(this.passwordInput, password);
+  }
 
-  public async fillEmail(email: string) {
-    await this.stableFill(this.emailInput, email);
+  public async fillConfirmPassword(password: string) {
+    await this.stableFill(this.confirmPasswordInput, password);
   }
 
   public async submit() {
     await this.stableClick(this.submitButton);
   }
 
-  public async requestPasswordReset(email: string) {
-    await this.fillEmail(email);
+  public async submitWithEnter() {
+    await this.confirmPasswordInput.press("Enter");
+  }
+
+  public async resetPassword(payload: ResetPasswordPayload) {
+    await this.fillPassword(payload.password);
+    await this.fillConfirmPassword(payload.confirmPassword);
     await this.submit();
+  }
+
+  public async togglePasswordVisibility() {
+    await this.stableClick(this.passwordToggleButton);
   }
 
   /* -------------------------------------------------------------------------- */
   /*                                 Assertions                                 */
   /* -------------------------------------------------------------------------- */
   public async expectLoaded() {
+    await this.waitUntilReady();
+
     await expect(this.heading).toBeVisible();
-    await expect(this.emailInput).toBeVisible();
-    await expect(this.emailInput).toBeEditable();
+    await expect(this.passwordInput).toBeVisible();
+    await expect(this.passwordInput).toBeEditable();
+    await expect(this.confirmPasswordInput).toBeVisible();
+    await expect(this.confirmPasswordInput).toBeEditable();
     await expect(this.submitButton).toBeVisible();
     await expect(this.submitButton).toBeEnabled();
   }
 
-  public async expectValidationError(message: string | RegExp) {
-    await expect(this.page.getByText(message)).toBeVisible();
+  public async expectSuccess() {
+    await this.expectToast(/contraseña restablecida/i);
   }
 
-  public async expectSuccess() {
-    await this.expectToast(/solicitud enviada/i);
+  public async expectPasswordVisible() {
+    await expect(this.passwordInput).toHaveAttribute("type", "text");
+  }
+
+  public async expectPasswordHidden() {
+    await expect(this.passwordInput).toHaveAttribute("type", "password");
+  }
+
+  public async expectValidationError(message: string | RegExp) {
+    await expect(this.page.getByText(message).first()).toBeVisible();
   }
 }

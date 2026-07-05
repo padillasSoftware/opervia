@@ -4,7 +4,7 @@ import type { FirstLoginUser } from "../factories/user.factory";
 export class UserApi {
   constructor(private readonly request: APIRequestContext) {}
 
-  async createFirstLoginUser(user: FirstLoginUser) {
+  async createUser(user: FirstLoginUser) {
     const response = await this.request.post("/api/e2e/users/first-login", {
       data: user,
     });

@@ -69,10 +69,10 @@ test.describe("@ux ", () => {
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
 
-        const user = UserFactory.firstLoginUser();
+        const user = UserFactory.user();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     await signInPage.goto();
 
