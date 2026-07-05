@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "lib": ["ESNext", "dom", "dom.iterable", "webworker"]
   },
   "files": [],
   "references": [
