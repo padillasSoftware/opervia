@@ -51,6 +51,8 @@ const handleSubmit = async (payload: {
     password-id="first-login-password-input"
     confirm-password-id="first-login-confirm-password-input"
     button-id="first-login-submit-button"
+    password-toggle-button-id="first-login-toggle-password-button"
+    confirm-password-toggle-button-id="first-login-toggle-confirm-password-button"
     @submit="handleSubmit"
   />
 </template>
