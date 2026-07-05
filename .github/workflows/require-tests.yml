@@ -8,6 +8,10 @@ on:
     branches:
       - staging
 
+concurrency:
+  group: require-tests-${{ github.event.pull_request.number || github.ref_name }}
+  cancel-in-progress: false
+
 permissions:
   contents: read
 
@@ -15,6 +19,7 @@ jobs:
   require-tests:
     name: Require Tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout repository
