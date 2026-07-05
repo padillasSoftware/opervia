@@ -16,18 +16,39 @@ const employeeBodySchema = z.object({
 
 export default defineEventHandler(async (event) => {
   try {
-    const { user: loggedUser } = await getUserSession(event);
+    const { user: loggedUser } = await requireUserSession(event);
 
-    if (!loggedUser) {
+    const rolesAllowed = ["SUPER_ADMIN", "MANAGER"];
+    if (!rolesAllowed.includes(loggedUser.role)) {
       throw errorHandler(
-        HttpStatus.UNAUTHORIZED,
-        HttpStatus.UNAUTHORIZED,
-        "UNAUTHORIZED",
-        "Unauthorized",
+        HttpStatus.FORBIDDEN,
+        HttpStatus.FORBIDDEN,
+        "FORBIDDEN",
+        "Forbidden",
       );
     }
 
     const body = await readValidatedBody(event, employeeBodySchema.parse);
+
+    if (loggedUser.role === "MANAGER") {
+      if (body.centerId !== loggedUser.centerId) {
+        throw errorHandler(
+          HttpStatus.FORBIDDEN,
+          HttpStatus.FORBIDDEN,
+          "FORBIDDEN",
+          "Forbidden",
+        );
+      }
+
+      if (body.role === "SUPER_ADMIN") {
+        throw errorHandler(
+          HttpStatus.FORBIDDEN,
+          HttpStatus.FORBIDDEN,
+          "FORBIDDEN",
+          "Forbidden",
+        );
+      }
+    }
 
     const {
       firstName,
@@ -106,5 +127,7 @@ export default defineEventHandler(async (event) => {
         });
       }
     }
+
+    throw error;
   }
 });

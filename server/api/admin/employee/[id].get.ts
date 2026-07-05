@@ -1,4 +1,5 @@
 export default defineEventHandler(async (event) => {
+  const session = await requireUserSession(event);
   const id = getRouterParam(event, "id") as string;
 
   if (id === "new") {
@@ -10,7 +11,6 @@ export default defineEventHandler(async (event) => {
       role: "",
       position: "",
       email: "",
-      password: "",
       status: "",
       hireDate: formatDate(new Date()),
     };
@@ -18,31 +18,42 @@ export default defineEventHandler(async (event) => {
 
   const employee = await prisma.employee.findUnique({
     where: {
-      id: id,
+      id,
     },
     include: {
-      user: true,
+      user: {
+        include: {
+          role: true,
+        },
+      },
     },
   });
 
-  if (!employee)
-    throw createError({ status: 404, message: "El empleado solocitado no pude ser encontrado." });
- 
-  const roleDB = await prisma.role.findUniqueOrThrow({
-        where: {
-          id: employee.user.roleId,
-        },
-      });
+  if (!employee) {
+    throw createError({
+      statusCode: 404,
+      statusMessage: "EMPLOYEE_NOT_FOUND",
+      message: "El empleado solicitado no pudo ser encontrado.",
+    });
+  }
+
+  if (session.user.role !== "SUPER_ADMIN" && employee.centerId !== session.user.centerId) {
+    throw createError({
+      statusCode: HttpStatus.FORBIDDEN,
+      statusMessage: "FORBIDDEN",
+      message: "Forbidden",
+    });
+  }
+
   return {
-      id: employee.id,
-      firstName: employee.firstName,
-      lastName: employee.lastName,
-      salary: employee.salary ?? 0,
-      role: roleDB.name,
-      position: employee.position,
-      email: employee.user.email,
-      password: employee.user.passwordHash,
-      status: employee.isActive,
-      hireDate: formatDate(employee.hireDate),
-    };
+    id: employee.id,
+    firstName: employee.firstName,
+    lastName: employee.lastName,
+    salary: employee.salary ?? 0,
+    role: employee.user.role.name,
+    position: employee.position,
+    email: employee.user.email,
+    status: employee.isActive,
+    hireDate: formatDate(employee.hireDate),
+  };
 });
