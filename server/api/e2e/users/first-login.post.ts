@@ -22,7 +22,6 @@ export default defineEventHandler(async (event) => {
 
 
     const body = await readValidatedBody(event, employeeBodySchema.parse);
-    console.log(body);
     const {
       firstName,
       lastName,
@@ -36,7 +35,7 @@ export default defineEventHandler(async (event) => {
 
     const passwordHash = await bcrypt.hash('TempPassword123!', 10);
     const hireDate = new Date(`${hireDateBody}T12:00:00.000Z`);
-    console.log(hireDate)
+  
     const employee = await prisma.$transaction(async (tx) => {
       const roleDB = await tx.role.findUniqueOrThrow({
         where: {

@@ -54,7 +54,6 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
   }
 }
 
-watch( () => state.email, (value) => console.log("EMAIL:", value ))
 </script>
 
 <template>
