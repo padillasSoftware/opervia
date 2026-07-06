@@ -4,6 +4,7 @@ export class AuthApi {
   constructor(private readonly request: APIRequestContext) {}
 
   async createResetPasswordUrl(email: string) {
+    
     const response = await this.request.post(
       "/api/e2e/auth/reset-password-url",
       {
