@@ -23,8 +23,8 @@ jobs:
       DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
       SUPERADMIN_EMAIL: ${{ secrets.SUPERADMIN_EMAIL }}
       SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
-      MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
-      MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
+      MANAGER_EMAIL: ${{ secrets.PROD_MANAGER_EMAIL }}
+      MANAGER_PASSWORD: ${{ secrets.PROD_MANAGER_PASSWORD }}
       QA_CENTER_ID: ${{ secrets.PROD_SMOKE_CENTER_ID }}
 
     steps:
