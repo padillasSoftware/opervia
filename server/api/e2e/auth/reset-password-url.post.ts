@@ -1,5 +1,5 @@
 export default defineEventHandler(async (event) => {
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.PLAYRIGHT === "false") {
     throw createError({ statusCode: 404 });
   }
 
