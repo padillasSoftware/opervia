@@ -8,10 +8,10 @@ import { DashboardPage } from "../../../playwright/pages/dashboard/dashboard.pag
 
 test.describe("@smoke Authenticated auth", () => {
   test("first-login user updates password and last login", async ({ page, request }) => {
-    const user = UserFactory.firstLoginUser();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);

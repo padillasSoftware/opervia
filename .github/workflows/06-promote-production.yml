@@ -1,9 +1,9 @@
-name: 05 Promote Production
+name: 06 Promote Production
 
 on:
   workflow_run:
     workflows:
-      - 04 Smoke Staging
+      - 05 Smoke Staging
     types:
       - completed
 

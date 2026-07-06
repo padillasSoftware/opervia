@@ -6,10 +6,10 @@ import { FirstLoginPage } from "../../playwright/pages/auth/first-login.page";
 
 test.describe("@smoke Employee forbidden admin access", () => {
   test("employee cannot access admin employees list API", async ({ page, request }) => {
-    const user = UserFactory.firstLoginUser();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
-    await userApi.createFirstLoginUser(user);
+    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
