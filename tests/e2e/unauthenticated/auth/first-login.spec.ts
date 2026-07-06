@@ -191,4 +191,21 @@ test.describe("@ux First Login", () => {
     await firstLoginPage.togglePasswordVisibility();
     await firstLoginPage.expectPasswordHidden();
   });
+
+  test("back to sign in page link visible", async ({ page, request }) => {
+    const user = UserFactory.user();
+    const userApi = new UserApi(request);
+
+    await userApi.createUser(user);
+
+    const signInPage = new SignInPage(page);
+    const firstLoginPage = new FirstLoginPage(page);
+
+    await signInPage.goto();
+    await signInPage.signIn(user);
+
+    await firstLoginPage.expectLoaded();
+
+    await firstLoginPage.expectBackLinkVisible();
+  });
 });
