@@ -79,6 +79,26 @@ jobs:
           echo "Timed out waiting for Netlify production preview deploy."
           exit 1
 
+      - name: Wait for health endpoint
+        run: |
+          echo "Health URL: $BASE_URL/api/health"
+
+          for i in {1..30}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$BASE_URL/api/health")
+
+            echo "Attempt $i - Status: $STATUS"
+
+            if [ "$STATUS" = "200" ]; then
+              echo "Health check passed."
+              exit 0
+            fi
+
+            sleep 10
+          done
+
+          echo "Health endpoint never returned 200."
+          exit 1
+          
       - name: Run smoke tests against production preview
         run: npx playwright test --grep "@smoke"
 
