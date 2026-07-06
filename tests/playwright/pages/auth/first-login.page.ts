@@ -1,5 +1,4 @@
 import { expect, type Locator } from "@playwright/test";
-import { expect, type Locator } from "@playwright/test";
 import { BasePage } from "../base.page";
 
 type FirstLoginPassword = {
@@ -19,21 +18,6 @@ export class FirstLoginPage extends BasePage {
   );
 
   readonly submitButton = this.page.locator("#first-login-submit-button");
-  readonly passwordToggleButton = this.page.locator(
-    "#first-login-toggle-password-button",
-  );
-
-  readonly minLengthRequirement = this.page.getByTestId(
-    "password-requirement-min-length",
-  );
-
-  readonly uppercaseRequirement = this.page.getByTestId(
-    "password-requirement-uppercase",
-  );
-
-  readonly numberRequirement = this.page.getByTestId(
-    "password-requirement-number",
-  );
   readonly passwordToggleButton = this.page.locator(
     "#first-login-toggle-password-button",
   );
