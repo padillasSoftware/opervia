@@ -5,7 +5,6 @@ export class UserApi {
   constructor(private readonly request: APIRequestContext) {}
 
   async createUser(user: FirstLoginUser) {
-
     const response = await this.request.post("/api/e2e/users/first-login", {
       data: user,
     });

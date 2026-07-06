@@ -9,8 +9,10 @@ import { DashboardPage } from "../../../playwright/pages/dashboard/dashboard.pag
 test.describe("@smoke First Login", () => {
   test("loads first login page", async ({ page, request }) => {
     const user = UserFactory.user();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
+    await userApi.createUser(user);
     await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
@@ -24,9 +26,11 @@ test.describe("@smoke First Login", () => {
 
   test("updates password successfully", async ({ page, request }) => {
     const user = UserFactory.user();
+    const user = UserFactory.user();
     const newPassword = UserFactory.validPassword();
     const userApi = new UserApi(request);
 
+    await userApi.createUser(user);
     await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
@@ -47,12 +51,17 @@ test.describe("@smoke First Login", () => {
     await dashboardPage.expectLoaded();
   });
 });
+  });
+});
 
+test.describe("@validation First Login", () => {
 test.describe("@validation First Login", () => {
   test("requires password", async ({ page, request }) => {
     const user = UserFactory.user();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
+    await userApi.createUser(user);
     await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
@@ -71,8 +80,10 @@ test.describe("@validation First Login", () => {
 
   test("requires confirm password", async ({ page, request }) => {
     const user = UserFactory.user();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
+    await userApi.createUser(user);
     await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
@@ -89,12 +100,17 @@ test.describe("@validation First Login", () => {
     await firstLoginPage.expectValidationError(
       /confirmar.*contraseña|contraseña.*confirmación/i,
     );
+    await firstLoginPage.expectValidationError(
+      /confirmar.*contraseña|contraseña.*confirmación/i,
+    );
   });
 
   test("prevents password mismatch", async ({ page, request }) => {
     const user = UserFactory.user();
+    const user = UserFactory.user();
     const userApi = new UserApi(request);
 
+    await userApi.createUser(user);
     await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
@@ -209,3 +225,4 @@ test.describe("@ux First Login", () => {
     await firstLoginPage.expectBackLinkVisible();
   });
 });
+
