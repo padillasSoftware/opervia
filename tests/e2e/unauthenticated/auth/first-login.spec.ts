@@ -11,7 +11,6 @@ test.describe("@smoke First Login", () => {
     const userApi = new UserApi(request);
 
     await userApi.createUser(user);
-    await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
@@ -27,7 +26,6 @@ test.describe("@smoke First Login", () => {
     const newPassword = UserFactory.validPassword();
     const userApi = new UserApi(request);
 
-    await userApi.createUser(user);
     await userApi.createUser(user);
 
     const signInPage = new SignInPage(page);
@@ -56,7 +54,6 @@ test.describe("@validation First Login", () => {
       const userApi = new UserApi(request);
 
       await userApi.createUser(user);
-      await userApi.createUser(user);
 
       const signInPage = new SignInPage(page);
       const firstLoginPage = new FirstLoginPage(page);
@@ -76,7 +73,6 @@ test.describe("@validation First Login", () => {
       const user = UserFactory.user();
       const userApi = new UserApi(request);
 
-      await userApi.createUser(user);
       await userApi.createUser(user);
 
       const signInPage = new SignInPage(page);
@@ -102,7 +98,6 @@ test.describe("@validation First Login", () => {
       const user = UserFactory.user();
       const userApi = new UserApi(request);
 
-      await userApi.createUser(user);
       await userApi.createUser(user);
 
       const signInPage = new SignInPage(page);
