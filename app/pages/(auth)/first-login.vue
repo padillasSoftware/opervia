@@ -53,6 +53,7 @@ const handleSubmit = async (payload: {
     button-id="first-login-submit-button"
     password-toggle-button-id="first-login-toggle-password-button"
     confirm-password-toggle-button-id="first-login-toggle-confirm-password-button"
+    :display-back-link="true"
     @submit="handleSubmit"
   />
 </template>

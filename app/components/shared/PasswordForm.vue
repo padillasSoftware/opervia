@@ -9,6 +9,7 @@ defineProps<{
   buttonId?: string;
   passwordToggleButtonId?: string;
   confirmPasswordToggleButtonId?: string;
+  displayBackLink?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -24,6 +25,7 @@ const showPassword = ref(false);
 const showConfirmPassword = ref(false);
 const wasSubmitted = ref(false);
 
+const  { logout } = useAuthentication();
 const form = reactive({
   password: "",
   confirmPassword: "",
@@ -220,6 +222,17 @@ const toggleConfirmPassword = () => {
           {{ submitLabel ?? "Continuar" }}
         </UButton>
       </form>
+      <USeparator class="my-6" />
+
+      <div v-if="displayBackLink">
+        <NuxtLink
+          id="back-link"          
+          class="text-sm text-primary hover:underline"
+          @click.prevent="logout"
+        >
+          ← Volver al inicio de sesión
+        </NuxtLink>
+      </div>
     </UCard>
   </div>
 </template>

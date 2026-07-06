@@ -38,6 +38,8 @@ export class FirstLoginPage extends BasePage {
     name: /Establece tu nueva contraseña/i,
   });
 
+  readonly backLink = this.page.locator("#back-link");
+
   /* -------------------------------------------------------------------------- */
   /*                                  Navigation                                */
   /* -------------------------------------------------------------------------- */
@@ -106,7 +108,6 @@ export class FirstLoginPage extends BasePage {
     await expect(this.passwordInput).toHaveAttribute("type", "text");
   }
 
-  
   public async expectPasswordHidden() {
     await expect(this.passwordInput).toHaveAttribute("type", "password");
   }
@@ -116,5 +117,9 @@ export class FirstLoginPage extends BasePage {
 
   public async expectRequirementValid(requirement: Locator) {
     await expect(requirement).toHaveAttribute("data-valid", "true");
+  }
+
+  public async expectBackLinkVisible() {
+    await expect(this.backLink).toBeVisible();
   }
 }
