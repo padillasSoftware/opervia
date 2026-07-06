@@ -15,7 +15,6 @@ const employeeBodySchema = z.object({
 
 export default defineEventHandler(async (event) => {
 
-    console.log(event)
   // if (process.env.PLAYWRIGHT !== "true") {
   //   throw createError({ statusCode: 404 });
   // }
