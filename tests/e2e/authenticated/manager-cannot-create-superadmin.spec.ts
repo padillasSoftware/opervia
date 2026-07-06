@@ -6,11 +6,11 @@ import { FirstLoginPage } from "../../playwright/pages/auth/first-login.page";
 
 test.describe("@smoke Manager access control", () => {
   test("manager cannot create a superadmin employee", async ({ page, request }) => {
-    const managerUser = UserFactory.firstLoginUser();
+    const managerUser = UserFactory.user();
     managerUser.role = "MANAGER";
 
     const userApi = new UserApi(request);
-    await userApi.createFirstLoginUser(managerUser);
+    await userApi.createUser(managerUser);
 
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);

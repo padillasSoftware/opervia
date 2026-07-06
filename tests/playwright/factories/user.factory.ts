@@ -12,7 +12,7 @@ export type FirstLoginUser = {
 };
 
 export const UserFactory = {
-  firstLoginUser(): FirstLoginUser {
+  user(): FirstLoginUser {
     const id = crypto.randomUUID();
 
     return {

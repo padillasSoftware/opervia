@@ -1,4 +1,4 @@
-name: 01 CI
+name: 02 CI
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
       - staging
 
 concurrency:
-  group: pr-checks-${{ github.event.pull_request.number || github.ref_name }}
+  group: ci-${{ github.event.pull_request.number || github.ref_name }}
   cancel-in-progress: true
 
 permissions:
@@ -22,7 +22,7 @@ jobs:
     timeout-minutes: 20
 
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: ${{ secrets.PLAYWRIGHT_DATABASE_URL }}
       NUXT_SESSION_PASSWORD: ${{ secrets.NUXT_SESSION_PASSWORD }}
 
     steps:

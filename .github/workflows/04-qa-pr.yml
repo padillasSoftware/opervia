@@ -1,4 +1,4 @@
-name: 03 QA PR
+name: 04 QA PR
 
 on:
   pull_request:
@@ -20,7 +20,7 @@ jobs:
     timeout-minutes: 45
 
     env:
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_URL: ${{ secrets.PLAYWRIGHT_DATABASE_URL }}
       NUXT_SESSION_PASSWORD: ${{ secrets.NUXT_SESSION_PASSWORD }}
 
     steps:
@@ -38,14 +38,14 @@ jobs:
           SUPERADMIN_PASSWORD: ${{ secrets.SUPERADMIN_PASSWORD }}
           MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
           MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
-          QA_CENTER_ID: ${{ secrets.QA_CENTER_ID }}
+          QA_CENTER_ID: ${{ secrets.PLAYWRIGHT_CENTER_ID }}
         run: npx playwright test
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-qa-report
           path: playwright-report/
 
   auto-merge:

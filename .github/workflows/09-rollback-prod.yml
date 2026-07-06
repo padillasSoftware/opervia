@@ -1,0 +1,51 @@
+name: 09 Rollback Prod
+
+on:
+  workflow_run:
+    workflows:
+      - 08 Smoke Prod
+    types:
+      - completed
+
+concurrency:
+  group: rollback-prod
+  cancel-in-progress: false
+
+jobs:
+  rollback:
+    name: Rollback Production
+    runs-on: ubuntu-latest
+
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+
+    steps:
+      - name: Rollback Netlify production deploy
+        env:
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_ACCESS_TOKEN: ${{ secrets.NETLIFY_ACCESS_TOKEN }}
+        run: |
+          echo "08 Smoke Prod failed. Rolling back production..."
+
+          DEPLOYS=$(curl -s \
+            -H "Authorization: Bearer $NETLIFY_ACCESS_TOKEN" \
+            "https://api.netlify.com/api/v1/sites/$NETLIFY_SITE_ID/deploys?production=true&per_page=20")
+
+          CURRENT_DEPLOY_ID=$(echo "$DEPLOYS" | jq -r '.[0].id')
+
+          PREVIOUS_READY_DEPLOY_ID=$(echo "$DEPLOYS" | jq -r \
+            '[.[] | select(.state == "ready")][1].id')
+
+          if [ "$PREVIOUS_READY_DEPLOY_ID" = "null" ] || [ -z "$PREVIOUS_READY_DEPLOY_ID" ]; then
+            echo "No previous ready production deploy found."
+            exit 1
+          fi
+
+          echo "Current deploy: $CURRENT_DEPLOY_ID"
+          echo "Rolling back to: $PREVIOUS_READY_DEPLOY_ID"
+
+          curl -X POST \
+            -H "Authorization: Bearer $NETLIFY_ACCESS_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://api.netlify.com/api/v1/sites/$NETLIFY_SITE_ID/rollback?deploy_id=$PREVIOUS_READY_DEPLOY_ID"
+
+          echo "Rollback requested."

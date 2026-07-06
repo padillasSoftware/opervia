@@ -1,4 +1,4 @@
-name: 02 Require Tests
+name: 03 Require Tests
 
 on:
   pull_request:
