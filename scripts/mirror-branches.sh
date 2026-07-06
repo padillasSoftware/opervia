@@ -47,6 +47,13 @@ if [ "$SOURCE" = "staging" ] && [ "$TARGET" = "master" ]; then
   echo "WARNING: this will make origin/master match origin/staging."
 fi
 
+read -p "Mirror origin/${SOURCE} to origin/${TARGET}? (y/N): " CONFIRM
+
+if [[ "$CONFIRM" != "y" ]]; then
+  echo "Cancelled."
+  exit 0
+fi
+
 git fetch origin --prune
 
 git push origin --force-with-lease "origin/${SOURCE}:refs/heads/${TARGET}"
