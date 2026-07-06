@@ -16,9 +16,6 @@ test.describe("@smoke Sign In", () => {
 });
 
 test.describe("@validation ", () => {
-});
-
-test.describe("@validation ", () => {
   test("prevents sign in with invalid credentials", async ({ page }) => {
     const signInPage = new SignInPage(page);
 
@@ -72,7 +69,7 @@ test.describe("@ux ", () => {
     const signInPage = new SignInPage(page);
     const firstLoginPage = new FirstLoginPage(page);
 
-    const user = UserFactory.user();
+        const user = UserFactory.user();
     const userApi = new UserApi(request);
 
     await userApi.createUser(user);
