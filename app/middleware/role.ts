@@ -17,7 +17,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
       status: HttpStatus.FORBIDDEN,
       message: getErrorMessage("FORBIDDEN"),
       statusMessage: getErrorMessage("FORBIDDEN"),
-      stack: process.env.STAGE !== "prod" ? new Error().stack : "",
+      stack: process.env.NODE_ENV !== "production" ? new Error().stack : "",
     });
   }
 });

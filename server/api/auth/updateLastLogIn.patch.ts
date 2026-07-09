@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
-        return createError({
+        throw createError({
           statusCode: HttpStatus.CONFLICT,
           statusMessage: "DUPLICATED_EMAIL",
           data: {
@@ -64,6 +64,8 @@ export default defineEventHandler(async (event) => {
         });
       }
     }
+
+    throw error;
   }
 
   return {

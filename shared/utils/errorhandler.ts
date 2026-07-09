@@ -9,6 +9,6 @@ export const errorHandler = (statusCode: number, status: number, code: string, s
     data: {
       code: code,
     },
-    stack: process.env.STAGE !== "prod" ? new Error().stack : "",
+    stack: process.env.NODE_ENV !== "production" ? new Error().stack : "",
   });
 };

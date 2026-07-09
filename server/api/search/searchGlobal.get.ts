@@ -1,5 +1,5 @@
 export default defineEventHandler(async (event) => {
-  await requireUserSession(event);
+  const { user } = await requireUserSession(event);
 
   const query = getQuery(event);
   const q = String(query.q || "").trim();
@@ -10,62 +10,69 @@ export default defineEventHandler(async (event) => {
     gerente: "MANAGER",
     manager: "MANAGER",
     empleado: "EMPLOYEE",
-  };
+  } as const;
   const roleKey = q.toLowerCase() as keyof typeof roleMap;
   const role = roleMap[roleKey];
+  const canSearchEmployees = ["SUPER_ADMIN", "MANAGER"].includes(user.role);
+  const employeeCenterFilter =
+    user.role === "MANAGER" ? { centerId: user.centerId } : {};
 
-  const employees = await prisma.employee.findMany({
-    where: {
-      OR: [
-        {
-          firstName: {
-            contains: q,
-            mode: "insensitive",
-          },
-        },
-        {
-          lastName: {
-            contains: q,
-            mode: "insensitive",
-          },
-        }, 
-        {
-          user: {
-            email: {
-              contains: q,
-              mode: "insensitive",
+  const employees = q && canSearchEmployees
+    ? await prisma.employee.findMany({
+        where: {
+          ...employeeCenterFilter,
+          OR: [
+            {
+              firstName: {
+                contains: q,
+                mode: "insensitive",
+              },
             },
-          },
-        },
-        ...(role
-          ? [
-              {
-                user: {
-                  role: {
-                    name: {
-                      equals: role,
-                    },
-                  },
+            {
+              lastName: {
+                contains: q,
+                mode: "insensitive",
+              },
+            },
+            {
+              user: {
+                email: {
+                  contains: q,
+                  mode: "insensitive",
                 },
               },
-            ]
-          : []),
-      ],
-    },
-    include: {
-      user: {
-        select: {
-          email: true,
-          role: {
+            },
+            ...(role
+              ? [
+                  {
+                    user: {
+                      role: {
+                        name: {
+                          equals: role,
+                        },
+                      },
+                    },
+                  },
+                ]
+              : []),
+          ],
+        },
+        include: {
+          user: {
             select: {
-              id: true,
-              name: true,
+              email: true,
+              role: {
+                select: {
+                  id: true,
+                  name: true,
+                },
+              },
             },
           },
         },
-      },
-    },
-  });
+        take: 10,
+      })
+    : [];
 
   return {
     q,
@@ -84,11 +91,11 @@ export default defineEventHandler(async (event) => {
     })),
     patients: [],
     appointments: [],
-    actions: getQuickActions(q),
+    actions: getQuickActions(q, user.role),
   };
 });
 
-function getQuickActions(q: string) {
+function getQuickActions(q: string, userRole: string) {
   const actions = [
     {
       id: "new-employee",
@@ -97,6 +104,7 @@ function getQuickActions(q: string) {
       suffix: "Crear nuevo empleado",
       to: "/dashboard/employees/new",
       icon: "i-lucide-user-plus",
+      roles: ["SUPER_ADMIN", "MANAGER"],
     },
     {
       id: "new-patient",
@@ -105,12 +113,17 @@ function getQuickActions(q: string) {
       suffix: "Crear nuevo paciente",
       to: "/dashboard/patients/new",
       icon: "i-lucide-user-round-plus",
+      roles: ["SUPER_ADMIN", "MANAGER", "EMPLOYEE"],
     },
   ];
 
-  if (!q) return actions;
+  const allowedActions = actions.filter((action) =>
+    action.roles.includes(userRole),
+  );
 
-  return actions.filter((action) =>
+  if (!q) return allowedActions;
+
+  return allowedActions.filter((action) =>
     action.label.toLowerCase().includes(q.toLowerCase()),
   );
 }

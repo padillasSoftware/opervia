@@ -106,7 +106,7 @@ export default defineEventHandler(async (event) => {
     return responseHandler("EMPLOYEE_CREATED", "EMPLOYEE_CREATED", employee.id);
   } catch (error: unknown) {
     if (error instanceof z.ZodError) {
-      return createError({
+      throw createError({
         statusCode: HttpStatus.BAD_REQUEST,
         statusMessage: "VALIDATION_ERROR",
         data: {
@@ -118,7 +118,7 @@ export default defineEventHandler(async (event) => {
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
-        return createError({
+        throw createError({
           statusCode: HttpStatus.CONFLICT,
           statusMessage: "DUPLICATED_EMAIL",
           data: {

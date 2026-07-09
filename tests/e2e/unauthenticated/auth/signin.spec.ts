@@ -6,7 +6,7 @@ import { DashboardPage } from "../../../playwright/pages/dashboard/dashboard.pag
 import { UserApi } from "../../../playwright/api/user.api";
 import { UserFactory } from "../../../playwright/factories/user.factory";
 
-test.describe("@smoke Sign In", () => {
+test.describe("@smoke @remote-smoke Sign In", () => {
   test("loads sign in page", async ({ page }) => {
     const signInPage = new SignInPage(page);
 

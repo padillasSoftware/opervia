@@ -12,6 +12,6 @@ export const responseHandler = <T>(
     message: statusMessage,
     statusMessage,
     data,
-    stack: process.env.STAGE !== "prod" ? new Error().stack : undefined,
+    stack: process.env.NODE_ENV !== "production" ? new Error().stack : undefined,
   };
 };

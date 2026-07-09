@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("@smoke Authorization", () => {
+test.describe("@smoke @remote-smoke Authorization", () => {
   test("prevents unauthenticated access to admin employee create API", async ({ request }) => {
     const response = await request.post("/api/admin/employee", {
       data: {

@@ -1,6 +1,14 @@
 import bcrypt from "bcryptjs";
 import z from "zod";
 import { Prisma } from "../../../prisma/generated/client";
+import {
+  STRONG_PASSWORD_MESSAGE,
+  isStrongPassword,
+} from "#shared/utils/password";
+
+const passwordSchema = z.string().refine(isStrongPassword, {
+  message: STRONG_PASSWORD_MESSAGE,
+});
 
 export default defineEventHandler(async (event) => {
   const session = await requireUserSession(event);
@@ -9,7 +17,7 @@ export default defineEventHandler(async (event) => {
     event,
     z
       .object({
-        password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
+        password: passwordSchema,
       })
       .parse,
   );
@@ -42,16 +50,18 @@ export default defineEventHandler(async (event) => {
     });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
-          if (error.code === "P2002") {
-            return createError({
-              statusCode: HttpStatus.CONFLICT,
-              statusMessage: "DUPLICATED_EMAIL",
-              data: {
-                code: "DUPLICATED_EMAIL",
-              },
-            });
-          }
-        }
+      if (error.code === "P2002") {
+        throw createError({
+          statusCode: HttpStatus.CONFLICT,
+          statusMessage: "DUPLICATED_EMAIL",
+          data: {
+            code: "DUPLICATED_EMAIL",
+          },
+        });
+      }
+    }
+
+    throw error;
   }
 
   return {
