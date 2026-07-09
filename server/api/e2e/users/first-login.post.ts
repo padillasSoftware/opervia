@@ -14,13 +14,11 @@ const employeeBodySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
+  if (process.env.PLAYWRIGHT !== "true") {
+    throw createError({ statusCode: 404 });
+  }
 
-  // if (process.env.PLAYWRIGHT !== "true") {
-  //   throw createError({ statusCode: 404 });
-  // }
   try {
-
-
     const body = await readValidatedBody(event, employeeBodySchema.parse);
     const {
       firstName,
@@ -33,9 +31,9 @@ export default defineEventHandler(async (event) => {
       hireDate: hireDateBody,
     } = body;
 
-    const passwordHash = await bcrypt.hash('TempPassword123!', 10);
+    const passwordHash = await bcrypt.hash("TempPassword123!", 10);
     const hireDate = new Date(`${hireDateBody}T12:00:00.000Z`);
-  
+
     const employee = await prisma.$transaction(async (tx) => {
       const roleDB = await tx.role.findUniqueOrThrow({
         where: {
@@ -68,9 +66,8 @@ export default defineEventHandler(async (event) => {
 
     return responseHandler("EMPLOYEE_CREATED", "EMPLOYEE_CREATED", employee.id);
   } catch (error: unknown) {
-
     if (error instanceof z.ZodError) {
-      return createError({
+      throw createError({
         statusCode: HttpStatus.BAD_REQUEST,
         statusMessage: "VALIDATION_ERROR",
         data: {
@@ -82,7 +79,7 @@ export default defineEventHandler(async (event) => {
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === "P2002") {
-        return createError({
+        throw createError({
           statusCode: HttpStatus.CONFLICT,
           statusMessage: "DUPLICATED_EMAIL",
           data: {
@@ -92,6 +89,6 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    return error;
+    throw error;
   }
 });

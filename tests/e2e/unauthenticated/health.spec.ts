@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test.describe("@smoke Health endpoint", () => {
+test.describe("@smoke @remote-smoke Health endpoint", () => {
   test("returns ok status and database reachable", async ({ request }) => {
     const response = await request.get("/api/health");
 

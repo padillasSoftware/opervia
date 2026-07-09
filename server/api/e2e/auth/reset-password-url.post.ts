@@ -1,5 +1,5 @@
 export default defineEventHandler(async (event) => {
-  if (process.env.PLAYRIGHT === "false") {
+  if (process.env.PLAYWRIGHT !== "true") {
     throw createError({ statusCode: 404 });
   }
 
